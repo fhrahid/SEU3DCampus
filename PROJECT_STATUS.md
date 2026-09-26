@@ -1,5 +1,17 @@
 # Project status
 
+## Phase 03 — PASS
+
+SEU-inspired exterior massing and landscape character are layered over the locked blockout. The facade now has terracotta and pale concrete masses, glazed bands, a right vertical core, entrance colonnade, SEU signage, paved driveways, garden trees, and gate structures.
+
+Build: exterior source compiles cleanly with C++17, `-Wall -Wextra` and FreeGLUT/OpenGL. Output tested as `SEU/bin/Debug/SEU-exterior.exe`.
+
+Acceptance: room coordinates unchanged PASS; facade recognizable from the supplied SEU photograph PASS; entrance/garden/gates clear PASS; transparent glass state restored after drawing PASS; no new compiler warnings PASS.
+
+Known limitations: facade geometry is a lightweight approximation and is intentionally not a full multi-floor building.
+
+Next phase: Phase 04, interior furniture, doors, materials and glass.
+
 ## Phase 02 — PASS
 
 The reference-driven campus blockout is implemented in `SEU/src/world/CampusLayout.*`. It includes the exterior site, front and right driveways, garden trees, IN/OUT gates, guard room, Stair 1, Punch Gate, central room distribution, named room volumes, lifts, static Stairs 2/3, and nested Admission/Gaming room representations. `V` toggles a top-down camera, `L` toggles room labels, and `G` toggles debug outlines/grid. A second warm interior light is active alongside the exterior light.

@@ -42,12 +42,30 @@ void outline(const Rect& r) {
     glDisable(GL_LIGHTING); glColor3f(1, .12f, .1f); glBegin(GL_LINE_LOOP);
     glVertex3f(r.minX, y, r.minZ); glVertex3f(r.maxX, y, r.minZ); glVertex3f(r.maxX, y, r.maxZ); glVertex3f(r.minX, y, r.maxZ); glEnd(); glEnable(GL_LIGHTING);
 }
+void exteriorFacade(bool labels) {
+    // SEU-inspired massing sits above the unchanged ground-floor footprint.
+    render::box({-19.5f, 5.3f, 39.2f}, {7.5f, 8.2f, 1.2f}, {.58f, .22f, .14f});
+    render::box({-7.0f, 5.1f, 39.25f}, {16, 7.8f, .9f}, {.74f, .76f, .77f});
+    render::box({9.4f, 5.5f, 39.1f}, {6.0f, 8.6f, 1.4f}, {.8f, .81f, .8f});
+    render::glassPanel({-6.5f, 5.0f, 38.65f}, {12.5f, 6.9f, .08f}, {.3f, .7f, .78f, .55f});
+    render::glassPanel({4.0f, 5.0f, 38.62f}, {5.0f, 6.9f, .08f}, {.3f, .7f, .78f, .55f});
+    for (int i = 0; i < 7; ++i) {
+        render::box({9.4f, 2.2f + i * 1.0f, 38.35f}, {1.7f, .4f, .08f}, {.1f, .12f, .13f});
+    }
+    render::text3d({-1.2f, 7.2f, 38.55f}, "S E U", {1, 1, .96f});
+    // A shallow colonnade makes the front approach readable from outside.
+    for (float x = -10; x <= 10; x += 4) {
+        render::cylinder({x, 2.1f, 10.05f}, .18f, 4.2f, {.78f, .79f, .8f});
+    }
+    if (labels) render::text3d({-3.0f, 4.45f, 10.0f}, "SOUTHEAST UNIVERSITY", {1, 1, 1});
+}
 }
 void renderScene(bool showLabels, bool debugBounds) {
     render::plane({0, 0, 20}, {48, 0, 42}, {.22f, .27f, .25f});
     render::plane({0, .02f, 2.8f}, {34, 0, 5.2f}, gardenGreen);
     render::plane({0, .04f, 7.7f}, {48, 0, 4.2f}, driveway);
     render::plane({20, .04f, 24}, {8, 0, 34}, driveway);
+    exteriorFacade(showLabels);
     gate(-19, "IN GATE"); gate(20, "OUT GATE");
     render::box({-22.4f, 1.1f, 7.9f}, {3, 2.2f, 2.6f}, {.45f, .24f, .2f});
     render::text3d({-23.5f, 2.4f, 7.8f}, "GUARD", {1, 1, 1});
