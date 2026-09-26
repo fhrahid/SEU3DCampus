@@ -1,0 +1,22 @@
+{
+  "pack_name": "SEU 3D GLUT AI Agent Ready Pack",
+  "version": "3.0",
+  "entrypoint": "00_START_HERE/AI_ENTRYPOINT.md",
+  "master_prompt": "01_AGENT_INSTRUCTIONS/MASTER_AGENT_PROMPT.md",
+  "phase_directory": "03_PHASES",
+  "reference_directory": "08_ORIGINAL_REFERENCES",
+  "execution_policy": "one_phase_at_a_time",
+  "required_status_file": "PROJECT_STATUS.md",
+  "required_stack": [
+    "C++17",
+    "OpenGL",
+    "FreeGLUT"
+  ],
+  "games": [
+    "Ludo",
+    "Rubik's Cube",
+    "2048",
+    "Tic-Tac-Toe",
+    "Rock Paper Scissors"
+  ]
+}
