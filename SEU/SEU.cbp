@@ -54,7 +54,6 @@
 		<Unit filename="src/physics/CollisionWorld.cpp" />
 		<Unit filename="src/interaction/InteractionSystem.cpp" />
 		<Unit filename="src/games/GameManager.cpp" />
-		<Unit filename="src/games/Placeholders.cpp" />
 		<Unit filename="src/games/TicTacToe.cpp" />
 		<Unit filename="src/games/RockPaperScissors.cpp" />
 		<Unit filename="src/games/Game2048.cpp" />

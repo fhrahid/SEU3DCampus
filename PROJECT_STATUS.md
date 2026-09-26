@@ -1,5 +1,13 @@
 # Project status
 
+## Phase 14 — PASS
+
+The optimization and QA pass completed with a warning-free `-Werror` full build. The QA matrix is in `QA_REPORT.md`. It covers launch/resize, gate-to-stair route, repeated stairs, collision, locomotion, seating, all five games, reset/Escape/input isolation, OpenGL state restoration, and every graphics-course row. The audit also fixed the missing textured signage and removed obsolete placeholders.
+
+Acceptance: no known compile error, crash, blocker, soft-lock, required game break, or major collision exploit remains in the tested code paths.
+
+Next phase: Phase 15, final packaging and demo script.
+
 ## Phase 13A — PASS
 
 The mandatory course graphics audit is recorded in `docs/GRAPHICS_REQUIREMENTS.md`. Every required row is mapped to source, controls/location, and a live demonstration procedure: transformations, complex objects, continuous rotation, exterior view through glass, two lights, material properties, model/view transforms, procedural textures, and algorithmic mini-games.

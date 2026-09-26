@@ -50,6 +50,7 @@ void exteriorFacade(bool labels) {
     render::box({9.4f, 5.5f, 39.1f}, {6.0f, 8.6f, 1.4f}, {.8f, .81f, .8f});
     render::glassPanel({-6.5f, 5.0f, 38.65f}, {12.5f, 6.9f, .08f}, {.3f, .7f, .78f, .55f});
     render::glassPanel({4.0f, 5.0f, 38.62f}, {5.0f, 6.9f, .08f}, {.3f, .7f, .78f, .55f});
+    render::texturedBox({-1.0f, 7.25f, 38.48f}, {3.8f, .8f, .08f}, {.18f, .22f, .28f}, 3);
     for (int i = 0; i < 7; ++i) {
         render::box({9.4f, 2.2f + i * 1.0f, 38.35f}, {1.7f, .4f, .08f}, {.1f, .12f, .13f});
     }
