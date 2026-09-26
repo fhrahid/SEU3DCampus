@@ -37,6 +37,11 @@ void renderFurniture(bool labels) {
     counter(-20, 11.5f, 4.4f); counter(-14, 18.5f, 2.7f);
     table(-20, 1.2f, 17, 2.8f, 1.2f, {.64f, .38f, .16f}); chair(-20, 1.2f, 15.9f);
     render::box({-20, 1.9f, 22.4f}, {2.8f, 1.8f, .5f}, {.55f, .3f, .15f});
+    render::box({-20.5f, 1.45f, 22.4f}, {2.2f, .12f, 1.2f}, {.85f, .85f, .88f});
+    render::box({-20.5f, 1.7f, 22.4f}, {1.0f, .35f, .8f}, {.72f, .78f, .82f});
+    // Washroom fixtures make the two washroom zones identifiable.
+    for (float x : {-22.5f, -21.2f}) render::box({x, 1.0f, 26.2f}, {.55f, .55f, .55f}, {.9f, .9f, .92f});
+    for (float x : {13.2f, 14.5f}) render::box({x, 1.0f, 26.2f}, {.55f, .55f, .55f}, {.9f, .9f, .92f});
     // Cafeteria and faculty seating.
     for (float x : {-7.f, 0.f, 7.f}) { table(x, 1.2f, 34, 2.4f, 1.2f, {.55f, .3f, .15f}); chair(x - 1.5f, 1.2f, 34); chair(x + 1.5f, 1.2f, 34); }
     table(-17, 1.2f, 30.2f, 3, 1.1f, {.3f, .22f, .15f}); chair(-18.2f, 1.2f, 30.2f);

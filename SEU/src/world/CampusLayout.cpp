@@ -105,7 +105,12 @@ void renderScene(bool showLabels, bool debugBounds) {
     render::stairs({-5.5f, 0, 7.9f}, 7.5f, .15f, .34f, 8, {.63f, .64f, .67f});
     render::box({-1.75f, floorY + .2f, 14.8f}, {14.5f, .4f, .8f}, {.9f, .76f, .2f});
     render::text3d({-8, floorY + .5f, 14.8f}, "PUNCH GATE", {.15f, .1f, .05f});
-    room({-24,-12,10,24}, roomBlue, "ADMIN", showLabels);
+    // Left administrative zone follows the reference's nested and separate rooms.
+    room({-24,-21,10,13}, roomBlue, "SECURITY ROOM", showLabels);
+    room({-24,-12,13,21}, roomBlue, "ADMISSION OFFICE 1", showLabels);
+    room({-24,-17,16,21}, roomBlue, "ADMISSION OFFICE 2", showLabels);
+    room({-17,-12,13,21}, roomBlue, "BANK 1", showLabels);
+    room({-24,-17,21,24}, roomBlue, "INFIRMARY", showLabels);
     room({-24,-17,24,28}, roomPink, "FEMALE", showLabels);
     room({-17,-12,24,28}, roomPink, "LIFT 4 / 3", showLabels);
     room({-24,-11,28,33}, roomPurple, "FACULTY", showLabels);
@@ -128,8 +133,6 @@ void renderScene(bool showLabels, bool debugBounds) {
     door(7.5f, 17.0f, "GAMING ENTRY", true);
     door(7.5f, 13.5f, "ROOM 2", true);
     renderFurniture(showLabels);
-    render::text3d({-23, floorY + .2f, 20}, "ADMISSION 1 / 2  BANK 1", {1, 1, 1});
-    render::text3d({-23, floorY + .2f, 11}, "SECURITY", {1, 1, 1});
     if (debugBounds) {
         outline(building); outline(garden); outline(admin); outline(gaming);
     }

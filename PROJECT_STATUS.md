@@ -8,6 +8,8 @@ Build: corrected source compiles with C++17, `-Wall -Wextra -Werror`. Output tes
 
 Acceptance: reference direction mapping documented PASS; A/D screen movement PASS; doors PASS; ceilings PASS; all stairs PASS; lifts PASS; four-direction outside panorama PASS.
 
+The left administrative block is now split into Security Room, Admission Office 1, nested Admission Office 2, separate Bank 1 and Infirmary, with beds and washroom fixtures added. This removes the former combined ADMIN placeholder.
+
 Next step: run the updated desktop demo and verify the visual proportions against the supplied images.
 
 ## Phase 15 — PASS
