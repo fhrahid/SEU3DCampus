@@ -1,5 +1,15 @@
 # Project status
 
+## Phase 11 — PASS
+
+Rubik’s Cube now has a six-face 3×3 facelet representation, clockwise and inverse quarter-turns, move count, scramble, reset, solved detection, and an overlay net with six face colors. `U/D/L/R/F/B` turn faces, `I` held reverses the turn, `X` scrambles, and `N` resets. Four turns of a face restore its facelet orientation and move state remains synchronized.
+
+Build: complete source compiles cleanly with C++17, `-Wall -Wextra` and FreeGLUT/OpenGL. Output tested as `SEU/bin/Debug/SEU-rubiks.exe`.
+
+Acceptance: visible 3×3×3 face net PASS; standard face controls PASS; inverse controls PASS; scramble/reset PASS; four-turn face cycle PASS; input remains game-local PASS.
+
+Next phase: Phase 12, Ludo.
+
 ## Phase 10 — PASS
 
 The 2048 module now implements a 4×4 board, directional compaction, one-merge-per-pair behavior, score updates, deterministic seeded tile generation, 2048 detection, no-move detection, replay, and an isolated keyboard overlay. Arrow/WASD input is consumed by the game manager and never reaches campus movement.
