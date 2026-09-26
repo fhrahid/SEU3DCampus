@@ -1,5 +1,17 @@
 # Project status
 
+## Phase 07 — PASS
+
+`InteractionSystem` now owns proximity triggers and prompt routing. Chairs in the admission/cafeteria areas support `E` sit and stand, freeze player locomotion while seated, and expose the `SIT` state. Gaming Room 1 and 2 stations expose the same prompt path and set a game request for the next phase. Prompt rendering is visible in the HUD.
+
+Build: complete source compiles cleanly with C++17, `-Wall -Wextra` and FreeGLUT/OpenGL. Output tested as `SEU/bin/Debug/SEU-interaction.exe`.
+
+Acceptance: proximity detection PASS; E activation PASS; sit/stand lock PASS; game station trigger PASS; interaction prompt PASS; existing movement/collision behavior preserved PASS.
+
+Known limitations: game requests are queued but the mini-game manager is not yet connected; that is the explicit Phase 08 handoff.
+
+Next phase: Phase 08, gaming room framework.
+
 ## Phase 06 — PASS
 
 `CollisionWorld` now supplies solid AABBs for the site perimeter, room partitions, stairs/door boundaries and glass gaming walls. Player movement resolves X and Z independently for wall sliding, clamps to the site, and uses a radius to prevent tunneling through thin boundaries. `G` shows collider outlines alongside the layout debug view. Stair 1 remains open in the south perimeter.

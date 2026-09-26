@@ -13,6 +13,7 @@ void Player::look(float dx, float dy) {
     yaw += dx; pitch = std::max(-85.0f, std::min(85.0f, pitch - dy));
 }
 void Player::update(const Input& input, float dt, const CollisionWorld& world) {
+    if (seated) { state = State::Sit; return; }
     Vec3 forward{std::cos(yaw * pi / 180), 0, std::sin(yaw * pi / 180)};
     Vec3 right{std::cos((yaw - 90) * pi / 180), 0, std::sin((yaw - 90) * pi / 180)};
     Vec3 move{};
@@ -42,5 +43,5 @@ void Player::update(const Input& input, float dt, const CollisionWorld& world) {
 }
 Vec3 Player::eyePosition() const { return {position.x, position.y + eyeHeight_, position.z}; }
 const char* Player::stateName() const {
-    switch (state) { case State::Walk: return "WALK"; case State::Run: return "RUN"; case State::Jump: return "JUMP"; case State::Fall: return "FALL"; case State::Stair: return "STAIR"; default: return "IDLE"; }
+    switch (state) { case State::Walk: return "WALK"; case State::Run: return "RUN"; case State::Jump: return "JUMP"; case State::Fall: return "FALL"; case State::Stair: return "STAIR"; case State::Sit: return "SIT"; default: return "IDLE"; }
 }

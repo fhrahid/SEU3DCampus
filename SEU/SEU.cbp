@@ -51,6 +51,7 @@
 		<Unit filename="src/world/Furniture.cpp" />
 		<Unit filename="src/player/Player.cpp" />
 		<Unit filename="src/physics/CollisionWorld.cpp" />
+		<Unit filename="src/interaction/InteractionSystem.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

@@ -41,7 +41,10 @@ void App::update(float dt) {
         if (input_.held('e')) demoAngle_ -= 75 * dt;
         if (input_.held('+') || input_.held('=')) demoScale_ = std::min(3.0f, demoScale_ + dt);
         if (input_.held('-')) demoScale_ = std::max(.25f, demoScale_ - dt);
-    } else player_.update(input_, dt, collisionWorld_);
+    } else {
+        player_.update(input_, dt, collisionWorld_);
+        interaction_.update(input_, player_);
+    }
     input_.endFrame();
 }
 void App::setupLighting() {
@@ -72,6 +75,7 @@ void App::display() {
     glMatrixMode(GL_MODELVIEW); glPushMatrix(); glLoadIdentity();
     render::text2d(16, 28, demo_ ? "TRANSFORM: arrows move, Q/E rotate, +/- scale, T exit" : "WASD move | R/Shift run | 0 reset | Space jump | M mouse | V top view | L labels | G bounds", {1, 1, 1});
     if (!demo_) render::text2d(16, 52, player_.stateName(), {1, .85f, .25f});
+    if (!demo_ && interaction_.prompt()[0] != '\0') render::text2d(16, 78, interaction_.prompt(), {1, 1, 1});
     glPopMatrix(); glMatrixMode(GL_PROJECTION); glPopMatrix(); glMatrixMode(GL_MODELVIEW); glutSwapBuffers();
 }
 void App::reshape(int width, int height) {
