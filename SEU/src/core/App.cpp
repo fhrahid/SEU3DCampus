@@ -20,6 +20,7 @@ int App::run(int argc, char** argv) {
     glutMainLoop(); return EXIT_SUCCESS;
 }
 void App::update(float dt) {
+    if (games_.active()) { games_.update(input_); input_.endFrame(); return; }
     if (input_.pressed(27)) { std::exit(EXIT_SUCCESS); }
     if (input_.pressed('g')) debug_ = !debug_;
     if (input_.pressed('t')) demo_ = !demo_;
@@ -44,6 +45,7 @@ void App::update(float dt) {
     } else {
         player_.update(input_, dt, collisionWorld_);
         interaction_.update(input_, player_);
+        if (interaction_.gameRequested()) { games_.enter(); interaction_.clearGameRequest(); }
     }
     input_.endFrame();
 }
@@ -76,7 +78,9 @@ void App::display() {
     render::text2d(16, 28, demo_ ? "TRANSFORM: arrows move, Q/E rotate, +/- scale, T exit" : "WASD move | R/Shift run | 0 reset | Space jump | M mouse | V top view | L labels | G bounds", {1, 1, 1});
     if (!demo_) render::text2d(16, 52, player_.stateName(), {1, .85f, .25f});
     if (!demo_ && interaction_.prompt()[0] != '\0') render::text2d(16, 78, interaction_.prompt(), {1, 1, 1});
-    glPopMatrix(); glMatrixMode(GL_PROJECTION); glPopMatrix(); glMatrixMode(GL_MODELVIEW); glutSwapBuffers();
+    glPopMatrix(); glMatrixMode(GL_PROJECTION); glPopMatrix(); glMatrixMode(GL_MODELVIEW);
+    if (games_.active()) games_.render(width_, height_);
+    glutSwapBuffers();
 }
 void App::reshape(int width, int height) {
     width_ = std::max(1, width); height_ = std::max(1, height); glViewport(0, 0, width_, height_);

@@ -5,6 +5,7 @@
 #include "../player/Player.h"
 #include "../physics/CollisionWorld.h"
 #include "../interaction/InteractionSystem.h"
+#include "../games/GameManager.h"
 class App {
 public:
     static App& instance();
@@ -14,6 +15,7 @@ private:
     Player player_;
     CollisionWorld collisionWorld_;
     InteractionSystem interaction_;
+    GameManager games_;
     Camera camera_;
     int width_ = 1280, height_ = 720, lastTimeMs_ = 0;
     bool debug_ = true, demo_ = false, topDown_ = false, labels_ = true, mouseCaptured_ = false, ignoreMouseWarp_ = false;

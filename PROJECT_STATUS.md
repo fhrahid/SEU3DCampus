@@ -1,5 +1,17 @@
 # Project status
 
+## Phase 08 — PASS
+
+The shared `MiniGame` interface, `GameManager`, five separate game classes, game menu and overlay are in place. Gaming-room triggers open the menu; 1–5 open each named game placeholder; Escape returns to the menu and then the campus. While the game overlay is active, campus movement and interactions receive no updates, and the same GLUT window/callbacks remain in use.
+
+Build: complete source compiles cleanly with C++17, `-Wall -Wextra` and FreeGLUT/OpenGL. Output tested as `SEU/bin/Debug/SEU-games-framework.exe`.
+
+Acceptance: five game entry points PASS; shared game lifecycle/interface PASS; campus input lock PASS; menu and exit route PASS; player state retained on exit PASS; no duplicate callbacks PASS.
+
+Known limitations: game screens are explicit placeholders until Phases 09–12 implement their rules.
+
+Next phase: Phase 09, Tic-Tac-Toe and Rock Paper Scissors.
+
 ## Phase 07 — PASS
 
 `InteractionSystem` now owns proximity triggers and prompt routing. Chairs in the admission/cafeteria areas support `E` sit and stand, freeze player locomotion while seated, and expose the `SIT` state. Gaming Room 1 and 2 stations expose the same prompt path and set a game request for the next phase. Prompt rendering is visible in the HUD.

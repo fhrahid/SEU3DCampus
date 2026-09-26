@@ -52,6 +52,8 @@
 		<Unit filename="src/player/Player.cpp" />
 		<Unit filename="src/physics/CollisionWorld.cpp" />
 		<Unit filename="src/interaction/InteractionSystem.cpp" />
+		<Unit filename="src/games/GameManager.cpp" />
+		<Unit filename="src/games/Placeholders.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>
