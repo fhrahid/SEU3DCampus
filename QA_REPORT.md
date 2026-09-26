@@ -23,6 +23,11 @@ Command: MinGW 8.1.0, C++17, `-Wall -Wextra -Werror`, all `SEU/src` modules, Fre
 | Input isolation | PASS | active games bypass campus/player update |
 | GL state restoration | PASS | scoped blend/texture/UI state in render helpers |
 | Course graphics matrix | PASS | `docs/GRAPHICS_REQUIREMENTS.md` |
+| Reference left/right orientation | PASS | `docs/REFERENCE_CORRECTION.md`; A/D follows screen basis |
+| Door and ceiling geometry | PASS | Room-front framed doors and per-room ceilings |
+| Stair 1/2/3 assemblies | PASS | Physical steps and railings in `CampusLayout.cpp`/`Furniture.cpp` |
+| Lift 1/2/3/4 doors | PASS | Split steel lift-door assemblies in `Furniture.cpp` |
+| Four-direction exterior view | PASS | `O` orbit panorama and surrounding campus masses |
 
 ## Fixes made during audit
 
