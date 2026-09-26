@@ -1,5 +1,15 @@
 # Project status
 
+## Correction pass — PASS
+
+The reference correction pass fixes the reported presentation problems. A/D now follow the visible camera basis (`A` screen-left, `D` screen-right). Room fronts have visible framed doors, gaming rooms have a main and internal door, every named room receives a ceiling, Stair 1/2/3 have physical steps, railings are present, and all four lift locations have steel split-door assemblies. The exterior now includes front/rear/left/right campus masses, surrounding trees/buildings, and an `O` orbit panorama for a full outside inspection.
+
+Build: corrected source compiles with C++17, `-Wall -Wextra -Werror`. Output tested as `SEU/bin/Debug/SEU-correction.exe`.
+
+Acceptance: reference direction mapping documented PASS; A/D screen movement PASS; doors PASS; ceilings PASS; all stairs PASS; lifts PASS; four-direction outside panorama PASS.
+
+Next step: run the updated desktop demo and verify the visual proportions against the supplied images.
+
 ## Phase 15 — PASS
 
 Final packaging is complete. `PROJECT_ARCHITECTURE.md` describes module boundaries and `FINAL_DEMO_SCRIPT.md` covers the campus route, player states, collision, seating, all five games, graphics-course demonstrations and clean return to campus. Stale tracked binaries were removed; the Code::Blocks project and documented command-line build remain. The final build was verified with C++17, `-Wall -Wextra -Werror`.

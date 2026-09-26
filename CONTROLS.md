@@ -4,7 +4,7 @@
 
 - `WASD`: walk; `R` or Shift: run; `Space`: jump; `M` or left click: mouse look capture; `0`: reset spawn.
 - `E`: sit/stand near a chair or enter a game station.
-- `V`: top-down layout camera; `L`: room labels; `G`: collider/grid debug; `T`: transformation demo; `Esc`: quit campus.
+- `O`: orbit panorama of the exterior campus from all four directions; `V`: top-down layout camera; `L`: room labels; `G`: collider/grid debug; `T`: transformation demo; `Esc`: quit campus.
 
 ## Transformation demo
 

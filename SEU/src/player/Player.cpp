@@ -15,7 +15,9 @@ void Player::look(float dx, float dy) {
 void Player::update(const Input& input, float dt, const CollisionWorld& world) {
     if (seated) { state = State::Sit; return; }
     Vec3 forward{std::cos(yaw * pi / 180), 0, std::sin(yaw * pi / 180)};
-    Vec3 right{std::cos((yaw - 90) * pi / 180), 0, std::sin((yaw - 90) * pi / 180)};
+    // The GLUT camera's screen-right axis is the negative of the mathematical
+    // X axis when looking toward +Z. Keep A/D aligned with what the player sees.
+    Vec3 right{std::cos((yaw + 90) * pi / 180), 0, std::sin((yaw + 90) * pi / 180)};
     Vec3 move{};
     if (input.held('w')) move = move + forward;
     if (input.held('s')) move = move - forward;

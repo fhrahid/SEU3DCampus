@@ -23,8 +23,10 @@ void shelf(float x, float z, int levels) {
     for (int i = 0; i < levels; ++i) render::box({x, .5f + i * .55f, z}, {1.2f, .08f, 1.0f}, {.55f, .28f, .12f});
 }
 void lift(float x, float z) {
-    render::box({x, 1.8f, z}, {1.7f, 3.6f, .18f}, {.18f, .22f, .25f});
-    render::box({x, 1.8f, z - .12f}, {.5f, 2.7f, .05f}, {.68f, .73f, .76f});
+    render::box({x, 1.8f, z}, {1.9f, 3.6f, .2f}, {.18f, .22f, .25f});
+    render::box({x - .42f, 1.8f, z - .13f}, {.78f, 2.7f, .06f}, {.68f, .73f, .76f});
+    render::box({x + .42f, 1.8f, z - .13f}, {.78f, 2.7f, .06f}, {.68f, .73f, .76f});
+    render::box({x, 3.35f, z - .19f}, {.42f, .2f, .05f}, {.1f, .85f, .35f});
 }
 void rails(float x, float z, float width) {
     for (int i = 0; i < 5; ++i) render::cylinder({x + i * width / 4, 1.0f + i * .15f, z}, .035f, .9f, {.65f, .66f, .7f});

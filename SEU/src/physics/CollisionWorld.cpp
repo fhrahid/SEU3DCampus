@@ -11,7 +11,8 @@ CollisionWorld::CollisionWorld() {
     wall(-12.3f, -11.8f, 10, 13.4f); wall(-12.3f, -11.8f, 16.2f, 24);
     wall(2.0f, 2.4f, 25, 30); wall(3.8f, 4.2f, 24, 27.3f);
     wall(6.9f, 7.3f, 20, 24); wall(10.8f, 11.2f, 20, 24);
-    wall(-1.3f, 16.3f, 16.7f, 17.2f); wall(-1.3f, 16.3f, 13.2f, 13.8f);
+    wall(-1.3f, 6.5f, 16.7f, 17.2f); wall(8.5f, 16.3f, 16.7f, 17.2f);
+    wall(-1.3f, 6.5f, 13.2f, 13.8f); wall(8.5f, 16.3f, 13.2f, 13.8f);
     wall(15.7f, 16.3f, 10, 17); wall(-1.3f, -.8f, 10, 13.8f);
 }
 bool CollisionWorld::overlaps(const Aabb& box, float x, float z, float radius) const {
