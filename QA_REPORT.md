@@ -33,6 +33,7 @@ Command: MinGW 8.1.0, C++17, `-Wall -Wextra -Werror`, all `SEU/src` modules, Fre
 | Designed ceilings and lights | PASS | `ceilingDecor`, recessed fixtures and top-view ceiling toggle |
 | Unified two-room gaming suite | PASS | `gamingSuite` outer shell, partition, doors and furniture |
 | SEU photograph facade view | PASS | `frontPhotoFacade` and `F` fixed camera mode |
+| Drone view from every side | PASS | `O` camera with orbit, height and zoom controls |
 
 ## Fixes made during audit
 

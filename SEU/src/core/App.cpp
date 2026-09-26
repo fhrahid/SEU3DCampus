@@ -25,13 +25,21 @@ int App::run(int argc, char** argv) {
 void App::update(float dt) {
     if (games_.active()) { games_.update(input_); input_.endFrame(); return; }
     rotationAngle_ += 55.0f * dt;
-    if (panorama_) orbitAngle_ += 12.0f * dt;
+    if (panorama_) {
+        if (input_.specialHeld(GLUT_KEY_LEFT)) orbitAngle_ += 55.0f * dt;
+        else if (input_.specialHeld(GLUT_KEY_RIGHT)) orbitAngle_ -= 55.0f * dt;
+        else orbitAngle_ += 12.0f * dt;
+        if (input_.held('[')) droneHeight_ = std::max(10.0f, droneHeight_ - 15.0f * dt);
+        if (input_.held(']')) droneHeight_ = std::min(65.0f, droneHeight_ + 15.0f * dt);
+        if (input_.held('-')) droneDistance_ = std::min(90.0f, droneDistance_ + 18.0f * dt);
+        if (input_.held('+') || input_.held('=')) droneDistance_ = std::max(30.0f, droneDistance_ - 18.0f * dt);
+    }
     if (input_.pressed(27)) { std::exit(EXIT_SUCCESS); }
     if (input_.pressed('g')) debug_ = !debug_;
     if (input_.pressed('t')) demo_ = !demo_;
-    if (input_.pressed('v')) topDown_ = !topDown_;
+    if (input_.pressed('v')) { topDown_ = !topDown_; panorama_ = false; facadeView_ = false; }
     if (input_.pressed('l')) labels_ = !labels_;
-    if (input_.pressed('o')) panorama_ = !panorama_;
+    if (input_.pressed('o')) { panorama_ = !panorama_; facadeView_ = false; topDown_ = false; }
     if (input_.pressed('f')) { facadeView_ = !facadeView_; panorama_ = false; topDown_ = false; }
     if (input_.pressed('0') && !demo_) player_.position = {-1.8f, 0, 6.3f};
     if (input_.pressed('m')) {
@@ -75,7 +83,7 @@ void App::display() {
         gluLookAt(0, 7.0f, -31.0f, 0, 5.5f, 9.0f, 0, 1, 0);
     } else if (panorama_) {
         const float angle = orbitAngle_ * .0174532925f;
-        gluLookAt(-std::cos(angle) * 58.0f, 24.0f, 20.0f + std::sin(angle) * 58.0f, 0, 2.0f, 20.0f, 0, 1, 0);
+        gluLookAt(-std::cos(angle) * droneDistance_, droneHeight_, 20.0f + std::sin(angle) * droneDistance_, 0, 4.0f, 20.0f, 0, 1, 0);
     } else if (topDown_) gluLookAt(0, 52, 20, 0, 0, 20, 0, 0, 1);
     else { camera_.position = player_.eyePosition(); camera_.position.x = -camera_.position.x; camera_.yaw = 180.0f - player_.yaw; camera_.pitch = player_.pitch; camera_.applyView(); }
     setupLighting();
@@ -97,7 +105,7 @@ void App::display() {
     glPopMatrix();
     glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity(); gluOrtho2D(0, width_, height_, 0);
     glMatrixMode(GL_MODELVIEW); glPushMatrix(); glLoadIdentity();
-    render::text2d(16, 28, demo_ ? "TRANSFORM: arrows move, Q/E rotate, +/- scale, T exit" : "WASD move | R/Shift run | 0 reset | F facade view | O orbit | V top view | L labels | G bounds", {1, 1, 1});
+    render::text2d(16, 28, demo_ ? "TRANSFORM: arrows move, Q/E rotate, +/- scale, T exit" : panorama_ ? "DRONE: arrows orbit | [/] height | +/- zoom | O exit" : "WASD move | R/Shift run | 0 reset | F facade view | O drone | V top view | L labels | G bounds", {1, 1, 1});
     if (!demo_) render::text2d(16, 52, player_.stateName(), {1, .85f, .25f});
     if (!demo_ && interaction_.prompt()[0] != '\0') render::text2d(16, 78, interaction_.prompt(), {1, 1, 1});
     glPopMatrix(); glMatrixMode(GL_PROJECTION); glPopMatrix(); glMatrixMode(GL_MODELVIEW);

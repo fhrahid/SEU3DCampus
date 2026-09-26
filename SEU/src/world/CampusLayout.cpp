@@ -167,6 +167,12 @@ void renderScene(bool showLabels, bool debugBounds, bool ceilings) {
     surroundingCampus();
     exteriorFacade(showLabels);
     frontPhotoFacade(showLabels);
+    if (showCeilings) {
+        render::box({-4, 14.2f, 24.5f}, {40, .3f, 31}, {.82f, .84f, .86f});
+        render::glassPanel({-4, 14.4f, 28}, {12, .05f, 12}, {.3f, .68f, .75f, .38f});
+        render::box({-4, 14.65f, 9.8f}, {40, .45f, .25f}, {.66f, .68f, .7f});
+        render::box({-4, 14.65f, 40}, {40, .45f, .25f}, {.66f, .68f, .7f});
+    }
     gate(-19, "IN GATE"); gate(20, "OUT GATE");
     // Orange access markers copied from the supplied top view. Coordinates
     // use the same plan mapping documented in LAYOUT_COORDINATES.md.

@@ -21,7 +21,7 @@ private:
     bool debug_ = true, demo_ = false, topDown_ = false, labels_ = true, panorama_ = false, facadeView_ = false, mouseCaptured_ = false, ignoreMouseWarp_ = false;
     Vec3 demoPosition_{0, 1, 4};
     float demoAngle_ = 0, demoScale_ = 1;
-    float rotationAngle_ = 0, orbitAngle_ = 0;
+    float rotationAngle_ = 0, orbitAngle_ = 0, droneDistance_ = 58, droneHeight_ = 24;
     App() = default;
     void update(float dt);
     void display();

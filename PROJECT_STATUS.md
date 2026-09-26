@@ -1,5 +1,15 @@
 # Project status
 
+## Drone campus view correction — PASS
+
+`O` is now a dedicated drone camera around the complete SEU building. It continuously circles the front, rear, left and right elevations, keeps the campus centered, and supports Left/Right orbit control, `[`/`]` height changes and `+/-` zoom. The building receives a roof/parapet and central skylight so high views read as a complete campus building instead of disconnected room blocks. `F` remains the photograph-style front facade view and `V` remains the reference top view.
+
+Build: source compiles with C++17, `-Wall -Wextra -Werror`. Output tested as `SEU/bin/Debug/SEU-drone.exe`.
+
+Acceptance: all-side exterior orbit PASS; drone height/zoom/orbit controls PASS; roof and skylight silhouette PASS; facade/front view preserved PASS.
+
+Next step: run `O` and inspect the full exterior at several heights and distances.
+
 ## Exterior facade view correction — PASS
 
 Added a dedicated SEU facade presentation view based on the supplied exterior photograph. The front elevation now includes the terracotta tower, glazed curtain wall with mullions and horizontal bands, pale SEU sign tower, window grid, right wing, entrance canopy, columns, glazing and bilingual signage. Press `F` to inspect the facade from a fixed front camera; `O` still orbits the full campus.
