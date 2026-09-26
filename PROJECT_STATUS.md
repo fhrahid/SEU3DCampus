@@ -1,5 +1,15 @@
 # Project status
 
+## Phase 10 — PASS
+
+The 2048 module now implements a 4×4 board, directional compaction, one-merge-per-pair behavior, score updates, deterministic seeded tile generation, 2048 detection, no-move detection, replay, and an isolated keyboard overlay. Arrow/WASD input is consumed by the game manager and never reaches campus movement.
+
+Build: complete source compiles cleanly with C++17, `-Wall -Wextra` and FreeGLUT/OpenGL. Output tested as `SEU/bin/Debug/SEU-2048.exe`.
+
+Acceptance: 2,2,2,2 merge behavior PASS; 4,4,8,8 chain behavior PASS; no double merge within a move PASS; score/win/game-over/replay PASS; campus input lock PASS.
+
+Next phase: Phase 11, Rubik's Cube.
+
 ## Phase 09 — PASS
 
 Tic-Tac-Toe and Rock Paper Scissors now have complete rule loops. Tic-Tac-Toe supports a 3×3 board, cursor or number selection, occupied-cell rejection, alternating local players, win/draw detection and replay. Rock Paper Scissors uses CPU random choice, correct modulo-three outcomes, score tracking and reset. Both render their live state in the game overlay and retain Escape-to-menu behavior.
