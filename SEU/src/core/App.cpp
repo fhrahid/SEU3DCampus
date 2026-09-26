@@ -1,6 +1,7 @@
 #include "App.h"
 #include "Config.h"
 #include "../render/Primitives.h"
+#include "../render/TextureManager.h"
 #include <GL/glut.h>
 #include <algorithm>
 #include <cstdlib>
@@ -12,6 +13,7 @@ int App::run(int argc, char** argv) {
     glutCreateWindow("Southeast University 3D Campus");
     glEnable(GL_DEPTH_TEST); glEnable(GL_NORMALIZE); glEnable(GL_CULL_FACE); glCullFace(GL_BACK);
     glClearColor(.13f, .19f, .27f, 1);
+    TextureManager::instance().initialize();
     glutDisplayFunc(displayCallback); glutReshapeFunc(reshapeCallback);
     glutKeyboardFunc(keyDownCallback); glutKeyboardUpFunc(keyUpCallback);
     glutSpecialFunc(specialDownCallback); glutSpecialUpFunc(specialUpCallback);
@@ -21,6 +23,7 @@ int App::run(int argc, char** argv) {
 }
 void App::update(float dt) {
     if (games_.active()) { games_.update(input_); input_.endFrame(); return; }
+    rotationAngle_ += 55.0f * dt;
     if (input_.pressed(27)) { std::exit(EXIT_SUCCESS); }
     if (input_.pressed('g')) debug_ = !debug_;
     if (input_.pressed('t')) demo_ = !demo_;
@@ -68,6 +71,8 @@ void App::display() {
     else { camera_.position = player_.eyePosition(); camera_.yaw = player_.yaw; camera_.pitch = player_.pitch; camera_.applyView(); }
     setupLighting();
     campus::renderScene(labels_, debug_);
+    glPushMatrix(); glTranslatef(-7, 3.2f, 34); glRotatef(rotationAngle_, 0, 1, 0);
+    render::box({0,0,0},{3.0f,.08f,.22f},{.9f,.75f,.18f}); render::box({0,0,0},{.22f,.08f,3.0f},{.9f,.75f,.18f}); glPopMatrix();
     if (debug_) { render::grid(24, 2); render::axes(3); }
     if (debug_) collisionWorld_.debugDraw();
     glPushMatrix(); glTranslatef(demoPosition_.x, demoPosition_.y, demoPosition_.z); glRotatef(demoAngle_, 0, 1, 0); glScalef(demoScale_, demoScale_, demoScale_);

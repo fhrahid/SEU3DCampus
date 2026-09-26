@@ -1,5 +1,6 @@
 #include "Primitives.h"
 #include <GL/glut.h>
+#include "TextureManager.h"
 namespace render {
 void material(Color c, float specular, float shininess) {
     const GLfloat ambient[] = {c.r * .28f, c.g * .28f, c.b * .28f, c.a};
@@ -18,6 +19,14 @@ void box(Vec3 center, Vec3 size, Color color) {
     glScalef(size.x, size.y, size.z);
     glutSolidCube(1);
     glPopMatrix();
+}
+void texturedBox(Vec3 center, Vec3 size, Color color, int textureType) {
+    material(color); glEnable(GL_TEXTURE_2D); TextureManager::instance().bind(static_cast<TextureManager::Type>(textureType));
+    glPushMatrix(); glTranslatef(center.x,center.y,center.z); glScalef(size.x,size.y,size.z);
+    const float v[8][3]={{-.5f,-.5f,-.5f},{.5f,-.5f,-.5f},{.5f,.5f,-.5f},{-.5f,.5f,-.5f},{-.5f,-.5f,.5f},{.5f,-.5f,.5f},{.5f,.5f,.5f},{-.5f,.5f,.5f}};
+    const int faces[6][4]={{0,1,2,3},{4,7,6,5},{0,4,5,1},{3,2,6,7},{1,5,6,2},{0,3,7,4}};
+    glBegin(GL_QUADS); for(const auto& face:faces) { glTexCoord2f(0,0);glVertex3fv(v[face[0]]);glTexCoord2f(1,0);glVertex3fv(v[face[1]]);glTexCoord2f(1,1);glVertex3fv(v[face[2]]);glTexCoord2f(0,1);glVertex3fv(v[face[3]]); } glEnd();
+    glPopMatrix(); glBindTexture(GL_TEXTURE_2D,0); glDisable(GL_TEXTURE_2D);
 }
 void plane(Vec3 center, Vec3 size, Color color) { box(center, {size.x, .02f, size.z}, color); }
 void cylinder(Vec3 center, float radius, float height, Color color) {

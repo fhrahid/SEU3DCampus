@@ -47,6 +47,7 @@
 		<Unit filename="src/core/Input.cpp" />
 		<Unit filename="src/render/Camera.cpp" />
 		<Unit filename="src/render/Primitives.cpp" />
+		<Unit filename="src/render/TextureManager.cpp" />
 		<Unit filename="src/world/CampusLayout.cpp" />
 		<Unit filename="src/world/Furniture.cpp" />
 		<Unit filename="src/player/Player.cpp" />

@@ -5,7 +5,7 @@ namespace campus {
 namespace {
 using render::Color;
 void table(float x, float y, float z, float w, float d, Color top) {
-    render::box({x, y + .8f, z}, {w, .12f, d}, top);
+    render::texturedBox({x, y + .8f, z}, {w, .12f, d}, top, 2);
     for (float sx : {-w * .38f, w * .38f}) for (float sz : {-d * .32f, d * .32f})
         render::box({x + sx, y + .4f, z + sz}, {.1f, .8f, .1f}, {.2f, .16f, .1f});
 }

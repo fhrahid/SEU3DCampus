@@ -19,7 +19,7 @@ void label(const Rect& r, const char* name, bool labels) {
     if (labels) render::text3d({(r.minX + r.maxX) * .5f - .8f, floorY + .04f, (r.minZ + r.maxZ) * .5f}, name, {1, 1, 1});
 }
 void room(const Rect& r, Color floor, const char* name, bool labels, bool glassFront = false) {
-    render::box({(r.minX + r.maxX) * .5f, floorY, (r.minZ + r.maxZ) * .5f}, {r.maxX-r.minX, .1f, r.maxZ-r.minZ}, floor);
+    render::texturedBox({(r.minX + r.maxX) * .5f, floorY, (r.minZ + r.maxZ) * .5f}, {r.maxX-r.minX, .1f, r.maxZ-r.minZ}, floor, 0);
     const float y = floorY + wallHeight * .5f;
     render::box({r.minX, y, (r.minZ+r.maxZ)*.5f}, {wallThickness, wallHeight, r.maxZ-r.minZ}, wall);
     render::box({r.maxX, y, (r.minZ+r.maxZ)*.5f}, {wallThickness, wallHeight, r.maxZ-r.minZ}, wall);
@@ -45,7 +45,7 @@ void outline(const Rect& r) {
 }
 void exteriorFacade(bool labels) {
     // SEU-inspired massing sits above the unchanged ground-floor footprint.
-    render::box({-19.5f, 5.3f, 39.2f}, {7.5f, 8.2f, 1.2f}, {.58f, .22f, .14f});
+    render::texturedBox({-19.5f, 5.3f, 39.2f}, {7.5f, 8.2f, 1.2f}, {.58f, .22f, .14f}, 1);
     render::box({-7.0f, 5.1f, 39.25f}, {16, 7.8f, .9f}, {.74f, .76f, .77f});
     render::box({9.4f, 5.5f, 39.1f}, {6.0f, 8.6f, 1.4f}, {.8f, .81f, .8f});
     render::glassPanel({-6.5f, 5.0f, 38.65f}, {12.5f, 6.9f, .08f}, {.3f, .7f, .78f, .55f});

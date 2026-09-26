@@ -1,5 +1,15 @@
 # Project status
 
+## Phase 13 — PASS
+
+Procedural checker textures are centralized in `TextureManager`, scoped through `texturedBox`, and applied to room floors, the terracotta facade and furniture. The campus has two simultaneous lights, reusable material properties, a delta-time rotating display, visible glass-to-exterior views, and a transform demo.
+
+Build: complete source compiles cleanly with C++17, `-Wall -Wextra` and FreeGLUT/OpenGL. Output tested as `SEU/bin/Debug/SEU-polish.exe`.
+
+Acceptance: texture state restored after textured geometry PASS; rotating object uses delta time PASS; lights/materials/glass PASS; controls and overlays readable PASS.
+
+Next phase: Phase 13A, course graphics requirements audit.
+
 ## Phase 12 — PASS
 
 Ludo now has a stable local player-versus-CPU implementation with a recognizable board, four tokens per side, dice rolls, six-to-launch, legal movement, turn handoff, CPU turns, home progress, win detection and reset. The overlay highlights the active turn and token positions; the selected rules are documented in `docs/LUDO_RULES.md`.
