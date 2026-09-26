@@ -28,6 +28,7 @@ Command: MinGW 8.1.0, C++17, `-Wall -Wextra -Werror`, all `SEU/src` modules, Fre
 | Stair 1/2/3 assemblies | PASS | Physical steps and railings in `CampusLayout.cpp`/`Furniture.cpp` |
 | Lift 1/2/3/4 doors | PASS | Split steel lift-door assemblies in `Furniture.cpp` |
 | Four-direction exterior view | PASS | `O` orbit panorama and surrounding campus masses |
+| Orange gates from supplied top view | PASS | Explicit orientation-specific gate list in `CampusLayout.cpp` |
 
 ## Fixes made during audit
 

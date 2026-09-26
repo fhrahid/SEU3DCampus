@@ -36,3 +36,7 @@ All coordinates are **approximate design units**, not surveyed metres. The sourc
 | Gaming Room 2 | 3 to 16 | 10 to 13.5 | Nested lower partition, only internal entry |
 
 Room bounds overlap at schematic edges where walls/door gaps will be resolved during blockout. An in-game top view and collision walkthrough must validate the final geometry against the annotated image.
+
+## Orange gate markers
+
+The orange rectangles in `PROMPT/08_ORIGINAL_REFERENCES/seu3dcampus.png` are modeled as separate low gate assemblies, rather than inferred only from room centers. Their world centers are: `(-18.6,31.7)`, `(-6.85,30)`, `(0.05,30)`, `(5.9,24.65)`, `(10,24.65)`, `(13.55,24.65)`, `(-15.1,24.35)`, `(-12.75,24.35)`, `(-18.45,23.15)`, `(-14.6,21.25)`, `(-7.75,21.05)`, `(-1.5,21.05)`, `(10.2,21.35)`, `(11.1,18.25)`, `(8.8,16.3)`, `(8.75,13.2)`, `(-16.6,17.25)`, `(-21,13.35)`, `(-14.5,9.95)`, and `(-21,8.25)`. The larger orange markers at `(-18.6,.35)` and `(18.5,.35)` are the IN and OUT gate markers. The Punch Gate is modeled separately as the striped central barrier.

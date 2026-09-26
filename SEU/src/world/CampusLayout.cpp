@@ -26,6 +26,13 @@ void door(float x, float z, const char* name, bool glassDoor = false) {
     render::box({x, floorY + 1.32f, z + .025f}, {1.45f, 2.55f, .06f}, glassDoor ? Color{.18f,.62f,.7f,.35f} : Color{.34f,.2f,.12f});
     if (name) render::text3d({x - .62f, floorY + 3.0f, z + .05f}, name, {1, 1, 1});
 }
+void orangeGate(float x, float z, float width, float depth, const char* name = nullptr) {
+    const Color orange{.95f, .48f, .04f};
+    render::box({x, floorY + .24f, z}, {width, .48f, depth}, orange);
+    render::box({x - width * .42f, floorY + .72f, z}, {.09f, .95f, depth + .08f}, {.32f, .18f, .05f});
+    render::box({x + width * .42f, floorY + .72f, z}, {.09f, .95f, depth + .08f}, {.32f, .18f, .05f});
+    if (name) render::text3d({x - width * .42f, floorY + 1.25f, z}, name, {1, .82f, .18f});
+}
 void room(const Rect& r, Color floor, const char* name, bool labels, bool glassFront = false) {
     render::texturedBox({(r.minX + r.maxX) * .5f, floorY, (r.minZ + r.maxZ) * .5f}, {r.maxX-r.minX, .1f, r.maxZ-r.minZ}, floor, 0);
     const float y = floorY + wallHeight * .5f;
@@ -99,6 +106,30 @@ void renderScene(bool showLabels, bool debugBounds) {
     surroundingCampus();
     exteriorFacade(showLabels);
     gate(-19, "IN GATE"); gate(20, "OUT GATE");
+    // Orange access markers copied from the supplied top view. Coordinates
+    // use the same plan mapping documented in LAYOUT_COORDINATES.md.
+    orangeGate(-18.6f, 31.7f, 1.65f, .42f);             // food shops / faculty
+    orangeGate(-6.85f, 30.0f, .62f, 1.45f);             // cafeteria west door
+    orangeGate(0.05f, 30.0f, .62f, 1.45f);              // cafeteria east door
+    orangeGate(5.9f, 24.65f, 1.35f, .46f);              // Lift 1
+    orangeGate(10.0f, 24.65f, 1.35f, .46f);             // Lift 2
+    orangeGate(13.55f, 24.65f, .48f, 1.35f);            // Male washroom
+    orangeGate(-15.1f, 24.35f, 1.25f, .46f);            // Lift 4
+    orangeGate(-12.75f, 24.35f, 1.25f, .46f);           // Lift 3
+    orangeGate(-18.45f, 23.15f, 1.25f, .46f);           // Infirmary
+    orangeGate(-14.6f, 21.25f, 1.18f, .46f);            // Bank 1 / admission
+    orangeGate(-7.75f, 21.05f, 1.45f, .46f);            // central left opening
+    orangeGate(-1.5f, 21.05f, 1.45f, .46f);             // central right opening
+    orangeGate(10.2f, 21.35f, 1.18f, .46f);             // Bank 2
+    orangeGate(11.1f, 18.25f, .46f, 1.3f);             // stationery
+    orangeGate(8.8f, 16.3f, 1.3f, .46f);                // Gaming Room 1
+    orangeGate(8.75f, 13.2f, 1.3f, .46f);               // Gaming Room 2
+    orangeGate(-16.6f, 17.25f, .46f, 1.25f);            // Admission Office 2
+    orangeGate(-21.0f, 13.35f, 1.25f, .46f);            // Admission Office 1
+    orangeGate(-14.5f, 9.95f, 1.25f, .46f);             // Stair 1 side access
+    orangeGate(-21.0f, 8.25f, .46f, 1.25f);             // Security / guard
+    orangeGate(-18.6f, .35f, 2.0f, .5f, "IN");         // outside IN gate marker
+    orangeGate(18.5f, .35f, 2.0f, .5f, "OUT");         // outside OUT gate marker
     render::box({-22.4f, 1.1f, 7.9f}, {3, 2.2f, 2.6f}, {.45f, .24f, .2f});
     render::text3d({-23.5f, 2.4f, 7.8f}, "GUARD", {1, 1, 1});
     for (float x : {-13.f, -5.f, 4.f, 12.f}) tree(x, 2.8f);

@@ -1,12 +1,12 @@
 # Project status
 
-## Orientation correction — PASS
+## Top-view gate correction — PASS
 
-The reference correction pass fixes the reported presentation problems. The complete rendered campus is now mirrored at the view boundary so the plan's gaming room stays on the visible right and admission remains on the visible left. A/D and mouse look use the same screen basis (`A` screen-left, `D` screen-right). Room fronts have visible framed doors, gaming rooms have a main and internal door, every named room receives a ceiling, Stair 1/2/3 have physical steps, railings are present, and all four lift locations have steel split-door assemblies. The exterior now includes front/rear/left/right campus masses, surrounding trees/buildings, and an `O` orbit panorama for a full outside inspection.
+The top view is now treated as the source for the orange access markers. All orange rectangles from the supplied image are explicit gate assemblies at documented plan coordinates, with orientation-specific dimensions. IN/OUT markers and the striped Punch Gate remain separate objects. The complete rendered campus is mirrored at the view boundary so gaming stays visibly on the right and admission on the left. Room fronts have framed doors, gaming rooms have a main and internal door, every named room receives a ceiling, Stair 1/2/3 have physical steps, railings, four lift-door assemblies, and an `O` orbit panorama covers the outside from four directions.
 
-Build: corrected source compiles with C++17, `-Wall -Wextra -Werror`. Output tested as `SEU/bin/Debug/SEU-orientation.exe`.
+Build: corrected source compiles with C++17, `-Wall -Wextra -Werror`. Output tested as `SEU/bin/Debug/SEU-gates.exe`.
 
-Acceptance: reference direction mapping documented PASS; A/D screen movement PASS; doors PASS; ceilings PASS; all stairs PASS; lifts PASS; four-direction outside panorama PASS.
+Acceptance: top-view orange gate mapping PASS; reference direction mapping PASS; A/D screen movement PASS; doors PASS; ceilings PASS; all stairs PASS; lifts PASS; four-direction outside panorama PASS.
 
 The left administrative block is now split into Security Room, Admission Office 1, nested Admission Office 2, separate Bank 1 and Infirmary, with beds and washroom fixtures added. This removes the former combined ADMIN placeholder.
 
