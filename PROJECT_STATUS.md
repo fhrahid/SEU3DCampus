@@ -1,5 +1,17 @@
 # Project status
 
+## Phase 06 — PASS
+
+`CollisionWorld` now supplies solid AABBs for the site perimeter, room partitions, stairs/door boundaries and glass gaming walls. Player movement resolves X and Z independently for wall sliding, clamps to the site, and uses a radius to prevent tunneling through thin boundaries. `G` shows collider outlines alongside the layout debug view. Stair 1 remains open in the south perimeter.
+
+Build: complete source compiles cleanly with C++17, `-Wall -Wextra` and FreeGLUT/OpenGL. Output tested as `SEU/bin/Debug/SEU-collision.exe`.
+
+Acceptance: site bounds PASS; AABB wall/glass blocking PASS; sliding response PASS; Stair 1 route remains open PASS; collider debug view PASS; large frame steps capped by engine timing PASS.
+
+Known limitations: furniture colliders are represented by room boundaries in this phase; individual movable seating and interaction triggers are added next.
+
+Next phase: Phase 07, sitting and interaction system.
+
 ## Phase 05 — PASS
 
 The first-person `Player` controller is implemented in `SEU/src/player/Player.*`. It has grounded eye-height movement, walk/run speeds, jump and gravity, fall/land handling, movement states, reset, mouse look, and a Stair 1 height profile that smoothly raises and lowers the player between driveway and floor level. The on-screen state label makes Idle, Walk, Run, Jump, Fall and Stair observable.

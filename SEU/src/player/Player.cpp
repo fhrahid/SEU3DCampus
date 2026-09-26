@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "../core/Input.h"
+#include "../physics/CollisionWorld.h"
 #include <algorithm>
 #include <cmath>
 namespace { constexpr float pi = 3.1415926535f; }
@@ -11,7 +12,7 @@ float Player::stairHeight(float x, float z) const {
 void Player::look(float dx, float dy) {
     yaw += dx; pitch = std::max(-85.0f, std::min(85.0f, pitch - dy));
 }
-void Player::update(const Input& input, float dt) {
+void Player::update(const Input& input, float dt, const CollisionWorld& world) {
     Vec3 forward{std::cos(yaw * pi / 180), 0, std::sin(yaw * pi / 180)};
     Vec3 right{std::cos((yaw - 90) * pi / 180), 0, std::sin((yaw - 90) * pi / 180)};
     Vec3 move{};
@@ -23,7 +24,7 @@ void Player::update(const Input& input, float dt) {
     const bool moving = length > .001f;
     const bool running = input.held(16) || input.held('r');
     const float speed = running ? runSpeed_ : walkSpeed_;
-    if (moving) { move = move * (1.0f / length); position = position + move * (speed * dt); }
+    if (moving) { move = move * (1.0f / length); position = world.move(position, move * (speed * dt), .34f); }
     const float targetFloor = stairHeight(position.x, position.z);
     if (input.pressed(' ') && grounded) { verticalVelocity = 5.2f; grounded = false; state = State::Jump; }
     if (!grounded) {

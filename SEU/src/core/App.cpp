@@ -41,7 +41,7 @@ void App::update(float dt) {
         if (input_.held('e')) demoAngle_ -= 75 * dt;
         if (input_.held('+') || input_.held('=')) demoScale_ = std::min(3.0f, demoScale_ + dt);
         if (input_.held('-')) demoScale_ = std::max(.25f, demoScale_ - dt);
-    } else player_.update(input_, dt);
+    } else player_.update(input_, dt, collisionWorld_);
     input_.endFrame();
 }
 void App::setupLighting() {
@@ -64,6 +64,7 @@ void App::display() {
     setupLighting();
     campus::renderScene(labels_, debug_);
     if (debug_) { render::grid(24, 2); render::axes(3); }
+    if (debug_) collisionWorld_.debugDraw();
     glPushMatrix(); glTranslatef(demoPosition_.x, demoPosition_.y, demoPosition_.z); glRotatef(demoAngle_, 0, 1, 0); glScalef(demoScale_, demoScale_, demoScale_);
     render::box({0, 0, 0}, {1.3f, 1.3f, 1.3f}, {.88f, .48f, .19f});
     render::cylinder({0, .85f, 0}, .23f, .4f, {.32f, .8f, .92f}); glPopMatrix();

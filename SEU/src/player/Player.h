@@ -1,6 +1,7 @@
 #pragma once
 #include "../render/Camera.h"
 class Input;
+class CollisionWorld;
 class Player {
 public:
     enum class State { Idle, Walk, Run, Jump, Fall, Stair };
@@ -9,7 +10,7 @@ public:
     float verticalVelocity = 0;
     bool grounded = true;
     State state = State::Idle;
-    void update(const Input& input, float dt);
+    void update(const Input& input, float dt, const CollisionWorld& world);
     void look(float dx, float dy);
     Vec3 eyePosition() const;
     const char* stateName() const;
