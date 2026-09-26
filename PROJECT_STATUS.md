@@ -1,5 +1,15 @@
 # Project status
 
+## Interior finish and gaming-suite correction — PASS
+
+The interior finish now uses bright white ceramic tile floors, off-white tiled walls and designed ceiling panels with perimeter beams and recessed warm lights. Top-down mode hides ceilings so the reference gate layout remains inspectable. Gaming Room 1 and Gaming Room 2 are rebuilt as one large outer suite with a shared glass envelope, real internal partition, internal door, main entry and dedicated carrom, table-tennis, pool, chess, cube and ludo setups.
+
+Build: source compiles with C++17, `-Wall -Wextra -Werror`. Output tested as `SEU/bin/Debug/SEU-white-gaming.exe`.
+
+Acceptance: white tile floors PASS; white walls PASS; designed ceiling PASS; top-down gates remain visible PASS; two-room gaming suite PASS; gaming furniture matches reference architecture PASS.
+
+Next step: run the desktop scene in first-person and top-down modes for final visual comparison.
+
 ## Top-view gate correction — PASS
 
 The top view is now treated as the source for the orange access markers. All orange rectangles from the supplied image are explicit gate assemblies at documented plan coordinates, with orientation-specific dimensions. IN/OUT markers and the striped Punch Gate remain separate objects. The complete rendered campus is mirrored at the view boundary so gaming stays visibly on the right and admission on the left. Room fronts have framed doors, gaming rooms have a main and internal door, every named room receives a ceiling, Stair 1/2/3 have physical steps, railings, four lift-door assemblies, and an `O` orbit panorama covers the outside from four directions.

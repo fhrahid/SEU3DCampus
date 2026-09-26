@@ -29,6 +29,9 @@ Command: MinGW 8.1.0, C++17, `-Wall -Wextra -Werror`, all `SEU/src` modules, Fre
 | Lift 1/2/3/4 doors | PASS | Split steel lift-door assemblies in `Furniture.cpp` |
 | Four-direction exterior view | PASS | `O` orbit panorama and surrounding campus masses |
 | Orange gates from supplied top view | PASS | Explicit orientation-specific gate list in `CampusLayout.cpp` |
+| White tile interior finish | PASS | Floor texture 0 and off-white wall material |
+| Designed ceilings and lights | PASS | `ceilingDecor`, recessed fixtures and top-view ceiling toggle |
+| Unified two-room gaming suite | PASS | `gamingSuite` outer shell, partition, doors and furniture |
 
 ## Fixes made during audit
 

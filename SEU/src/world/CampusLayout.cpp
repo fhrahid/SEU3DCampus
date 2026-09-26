@@ -9,12 +9,14 @@ namespace {
 using render::Color;
 const Color driveway{.66f, .61f, .48f};
 const Color gardenGreen{.15f, .46f, .18f};
-const Color wall{.76f, .78f, .8f};
+const Color wall{.93f, .94f, .96f};
+const Color tileFloor{.94f, .95f, .97f};
 const Color roomBlue{.28f, .52f, .7f};
 const Color roomPurple{.42f, .28f, .7f};
 const Color roomGreen{.35f, .67f, .5f};
 const Color roomPink{.68f, .45f, .7f};
 const Color glass{.22f, .72f, .82f, .42f};
+bool showCeilings = true;
 void label(const Rect& r, const char* name, bool labels) {
     if (labels) render::text3d({(r.minX + r.maxX) * .5f - .8f, floorY + .04f, (r.minZ + r.maxZ) * .5f}, name, {1, 1, 1});
 }
@@ -33,8 +35,22 @@ void orangeGate(float x, float z, float width, float depth, const char* name = n
     render::box({x + width * .42f, floorY + .72f, z}, {.09f, .95f, depth + .08f}, {.32f, .18f, .05f});
     if (name) render::text3d({x - width * .42f, floorY + 1.25f, z}, name, {1, .82f, .18f});
 }
-void room(const Rect& r, Color floor, const char* name, bool labels, bool glassFront = false) {
-    render::texturedBox({(r.minX + r.maxX) * .5f, floorY, (r.minZ + r.maxZ) * .5f}, {r.maxX-r.minX, .1f, r.maxZ-r.minZ}, floor, 0);
+void ceilingDecor(const Rect& r) {
+    const float cx = (r.minX + r.maxX) * .5f;
+    const float cz = (r.minZ + r.maxZ) * .5f;
+    const float y = floorY + wallHeight;
+    render::texturedBox({cx, y, cz}, {r.maxX-r.minX, .12f, r.maxZ-r.minZ}, {.95f,.96f,.98f}, 1);
+    render::box({cx, y + .08f, r.minZ + .16f}, {r.maxX-r.minX, .12f, .12f}, {.78f,.8f,.84f});
+    render::box({cx, y + .08f, r.maxZ - .16f}, {r.maxX-r.minX, .12f, .12f}, {.78f,.8f,.84f});
+    render::box({r.minX + .16f, y + .08f, cz}, {.12f, .12f, r.maxZ-r.minZ}, {.78f,.8f,.84f});
+    render::box({r.maxX - .16f, y + .08f, cz}, {.12f, .12f, r.maxZ-r.minZ}, {.78f,.8f,.84f});
+    const float lightY = y - .08f;
+    for (float x = r.minX + (r.maxX-r.minX)*.3f; x < r.maxX; x += (r.maxX-r.minX)*.4f)
+        for (float z = r.minZ + (r.maxZ-r.minZ)*.3f; z < r.maxZ; z += (r.maxZ-r.minZ)*.4f)
+            render::box({x, lightY, z}, {.34f, .06f, .18f}, {1.0f, .88f, .52f});
+}
+void room(const Rect& r, Color, const char* name, bool labels, bool glassFront = false) {
+    render::texturedBox({(r.minX + r.maxX) * .5f, floorY, (r.minZ + r.maxZ) * .5f}, {r.maxX-r.minX, .1f, r.maxZ-r.minZ}, tileFloor, 0);
     const float y = floorY + wallHeight * .5f;
     render::box({r.minX, y, (r.minZ+r.maxZ)*.5f}, {wallThickness, wallHeight, r.maxZ-r.minZ}, wall);
     render::box({r.maxX, y, (r.minZ+r.maxZ)*.5f}, {wallThickness, wallHeight, r.maxZ-r.minZ}, wall);
@@ -49,9 +65,27 @@ void room(const Rect& r, Color floor, const char* name, bool labels, bool glassF
         render::box({(center + doorHalf + r.maxX) * .5f, y, r.minZ}, {r.maxX - center - doorHalf, wallHeight, wallThickness}, wall);
     }
     door(center, r.minZ, name, glassFront);
-    // A separate ceiling keeps each named room readable from the ground floor.
-    render::box({center, floorY + wallHeight, (r.minZ + r.maxZ) * .5f}, {r.maxX-r.minX, .1f, r.maxZ-r.minZ}, {.9f, .9f, .9f});
+    if (showCeilings) ceilingDecor(r);
     label(r, name, labels);
+}
+void gamingSuite(bool labels) {
+    const Rect outer{-1, 16, 10, 17};
+    const float y = floorY + wallHeight * .5f;
+    render::texturedBox({7.5f, floorY, 13.5f}, {17, .1f, 7}, tileFloor, 0);
+    render::box({-1, y, 13.5f}, {.28f, wallHeight, 7}, wall);
+    render::glassPanel({16, y, 13.5f}, {.08f, wallHeight, 7}, glass);
+    render::glassPanel({7.5f, y, 17}, {17, wallHeight, .08f}, glass);
+    render::glassPanel({7.5f, y, 10}, {17, wallHeight, .08f}, glass);
+    // The two rooms are one large outer suite with a real internal partition.
+    render::box({2.75f, y, 13.5f}, {7.5f, wallHeight, .22f}, wall);
+    render::box({11.25f, y, 13.5f}, {7.5f, wallHeight, .22f}, wall);
+    door(7.5f, 17.0f, "GAMING ENTRY", true);
+    door(7.5f, 13.5f, "ROOM 2", true);
+    if (showCeilings) ceilingDecor(outer);
+    if (labels) {
+        render::text3d({3.0f, floorY + .04f, 15.0f}, "GAMING ROOM 1", {1, 1, 1});
+        render::text3d({3.0f, floorY + .04f, 11.6f}, "GAMING ROOM 2", {1, 1, 1});
+    }
 }
 void tree(float x, float z) {
     render::cylinder({x, .9f, z}, .13f, 1.8f, {.35f, .2f, .1f});
@@ -98,7 +132,8 @@ void surroundingCampus() {
     for (float z : {13.f, 21.f, 29.f, 37.f}) { tree(-27, z); tree(27, z); }
 }
 }
-void renderScene(bool showLabels, bool debugBounds) {
+void renderScene(bool showLabels, bool debugBounds, bool ceilings) {
+    showCeilings = ceilings;
     render::plane({0, 0, 20}, {48, 0, 42}, {.22f, .27f, .25f});
     render::plane({0, .02f, 2.8f}, {34, 0, 5.2f}, gardenGreen);
     render::plane({0, .04f, 7.7f}, {48, 0, 4.2f}, driveway);
@@ -136,6 +171,8 @@ void renderScene(bool showLabels, bool debugBounds) {
     render::stairs({-5.5f, 0, 7.9f}, 7.5f, .15f, .34f, 8, {.63f, .64f, .67f});
     render::box({-1.75f, floorY + .2f, 14.8f}, {14.5f, .4f, .8f}, {.9f, .76f, .2f});
     render::text3d({-8, floorY + .5f, 14.8f}, "PUNCH GATE", {.15f, .1f, .05f});
+    // Continuous white ceramic tile under the open interior circulation.
+    render::texturedBox({-4, floorY - .02f, 25}, {40, .08f, 30}, tileFloor, 0);
     // Left administrative zone follows the reference's nested and separate rooms.
     room({-24,-21,10,13}, roomBlue, "SECURITY ROOM", showLabels);
     room({-24,-12,13,21}, roomBlue, "ADMISSION OFFICE 1", showLabels);
@@ -159,10 +196,8 @@ void renderScene(bool showLabels, bool debugBounds) {
     room({12,16,24,28}, roomPink, "MALE", showLabels);
     room({7,11,20,24}, roomBlue, "BANK 2", showLabels);
     room({11,16,17,24}, roomGreen, "STATIONERY", showLabels);
-    room({-1,16,13.5f,17}, roomBlue, "GAMING 1", showLabels, true);
-    room({-1,16,10,13.5f}, roomBlue, "GAMING 2", showLabels, true);
-    door(7.5f, 17.0f, "GAMING ENTRY", true);
-    door(7.5f, 13.5f, "ROOM 2", true);
+    gamingSuite(showLabels);
+    if (showCeilings) ceilingDecor({-11, 9, 17, 30});
     renderFurniture(showLabels);
     if (debugBounds) {
         outline(building); outline(garden); outline(admin); outline(gaming);

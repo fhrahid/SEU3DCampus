@@ -52,16 +52,27 @@ void renderFurniture(bool labels) {
     lift(-19, 24.1f); lift(-14.5f, 24.1f); lift(6.2f, 24.1f); lift(10.2f, 24.1f);
     rails(1.2f, 25, 2.4f); rails(10.5f, 27.4f, 3.5f);
     // Gaming Room 1/2 hierarchical setup.
-    table(4, 1.2f, 15.2f, 3.3f, 1.7f, {.08f, .28f, .08f});
-    render::box({4, 2.05f, 15.2f}, {2.7f, .08f, 1.2f}, {.9f, .85f, .7f});
-    table(10, 1.2f, 15.2f, 3.5f, 1.8f, {.08f, .1f, .12f});
-    render::cylinder({10, 2.05f, 15.2f}, .6f, .08f, {.8f, .1f, .08f});
-    table(5, 1.2f, 11.7f, 3.3f, 1.7f, {.18f, .1f, .05f});
-    chair(3, 1.2f, 11.7f); chair(7, 1.2f, 11.7f);
+    // Room 1: carrom, table tennis and pool as the large outer-room setup.
+    table(3.2f, 1.2f, 15.2f, 2.8f, 1.5f, {.08f, .28f, .08f});
+    render::box({3.2f, 2.05f, 15.2f}, {2.2f, .08f, 1.0f}, {.9f, .85f, .7f});
+    table(7.6f, 1.2f, 15.2f, 3.5f, .9f, {.85f, .85f, .88f});
+    render::box({7.6f, 2.05f, 15.2f}, {2.7f, .08f, .45f}, {.8f, .8f, .82f});
+    table(12.2f, 1.2f, 15.2f, 3.0f, 1.5f, {.08f, .1f, .12f});
+    render::cylinder({12.2f, 2.05f, 15.2f}, .55f, .08f, {.8f, .1f, .08f});
+    // Room 2: carrom, seating, chess table, cube display and ludo table.
+    table(2.5f, 1.2f, 11.6f, 2.6f, 1.4f, {.18f, .1f, .05f});
+    chair(1.3f, 1.2f, 11.6f); chair(3.7f, 1.2f, 11.6f);
+    table(7.0f, 1.2f, 11.6f, 2.1f, 1.2f, {.12f, .32f, .16f});
+    render::box({7.0f, 2.0f, 11.6f}, {.9f, .08f, .9f}, {.85f, .75f, .25f});
+    table(11.0f, 1.2f, 11.6f, 2.2f, 1.2f, {.1f, .1f, .12f});
+    render::box({11.0f, 2.0f, 11.6f}, {.42f, .42f, .42f}, {.15f, .35f, .85f});
+    table(14.0f, 1.2f, 11.6f, 1.8f, 1.2f, {.55f, .25f, .08f});
+    chair(13.1f, 1.2f, 11.6f); chair(14.9f, 1.2f, 11.6f);
     if (labels) {
         render::text3d({-22, 3.1f, 11.2f}, "ADMISSION", {1, 1, 1});
         render::text3d({-22, 3.1f, 34.5f}, "CAFETERIA", {1, 1, 1});
-        render::text3d({2.5f, 3.1f, 15.2f}, "POOL / CARROM", {1, 1, 1});
+        render::text3d({2.0f, 3.1f, 15.2f}, "CARROM / TABLE TENNIS / POOL", {1, 1, 1});
+        render::text3d({2.0f, 3.1f, 11.6f}, "CARROM / CHESS / CUBE / LUDO", {1, 1, 1});
     }
 }
 }

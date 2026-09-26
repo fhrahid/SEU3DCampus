@@ -10,5 +10,5 @@ constexpr Rect garden{-16.5f, 15.5f, .5f, 5};
 constexpr Rect building{-24, 16, 10, 40};
 constexpr Rect admin{-24, -12, 10, 24};
 constexpr Rect gaming{-1, 16, 10, 17};
-void renderScene(bool showLabels, bool debugBounds);
+void renderScene(bool showLabels, bool debugBounds, bool showCeilings = true);
 }

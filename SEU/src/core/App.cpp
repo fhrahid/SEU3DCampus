@@ -82,7 +82,7 @@ void App::display() {
     glPushMatrix();
     glDisable(GL_CULL_FACE);
     glScalef(-1, 1, 1);
-    campus::renderScene(labels_, debug_);
+    campus::renderScene(labels_, debug_, !topDown_);
     glPushMatrix(); glTranslatef(-7, 3.2f, 34); glRotatef(rotationAngle_, 0, 1, 0);
     render::box({0,0,0},{3.0f,.08f,.22f},{.9f,.75f,.18f}); render::box({0,0,0},{.22f,.08f,3.0f},{.9f,.75f,.18f}); glPopMatrix();
     if (debug_) { render::grid(24, 2); render::axes(3); }
