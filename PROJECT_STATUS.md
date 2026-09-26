@@ -1,5 +1,11 @@
 # Project status
 
+## Phase 15 — PASS
+
+Final packaging is complete. `PROJECT_ARCHITECTURE.md` describes module boundaries and `FINAL_DEMO_SCRIPT.md` covers the campus route, player states, collision, seating, all five games, graphics-course demonstrations and clean return to campus. Stale tracked binaries were removed; the Code::Blocks project and documented command-line build remain. The final build was verified with C++17, `-Wall -Wextra -Werror`.
+
+Acceptance: source and project files packaged PASS; build instructions PASS; controls and architecture docs PASS; demo script PASS; stale build artifacts removed PASS; final working tree clean after commit PASS.
+
 ## Phase 14 — PASS
 
 The optimization and QA pass completed with a warning-free `-Werror` full build. The QA matrix is in `QA_REPORT.md`. It covers launch/resize, gate-to-stair route, repeated stairs, collision, locomotion, seating, all five games, reset/Escape/input isolation, OpenGL state restoration, and every graphics-course row. The audit also fixed the missing textured signage and removed obsolete placeholders.
