@@ -72,10 +72,16 @@ void App::display() {
     glMatrixMode(GL_MODELVIEW); glLoadIdentity();
     if (panorama_) {
         const float angle = orbitAngle_ * .0174532925f;
-        gluLookAt(std::cos(angle) * 58.0f, 24.0f, 20.0f + std::sin(angle) * 58.0f, 0, 2.0f, 20.0f, 0, 1, 0);
-    } else if (topDown_) gluLookAt(0, 52, 20, 0, 0, 20, 0, 0, -1);
-    else { camera_.position = player_.eyePosition(); camera_.yaw = player_.yaw; camera_.pitch = player_.pitch; camera_.applyView(); }
+        gluLookAt(-std::cos(angle) * 58.0f, 24.0f, 20.0f + std::sin(angle) * 58.0f, 0, 2.0f, 20.0f, 0, 1, 0);
+    } else if (topDown_) gluLookAt(0, 52, 20, 0, 0, 20, 0, 0, 1);
+    else { camera_.position = player_.eyePosition(); camera_.position.x = -camera_.position.x; camera_.yaw = 180.0f - player_.yaw; camera_.pitch = player_.pitch; camera_.applyView(); }
     setupLighting();
+    // The plan is authored from above with its right side on +X. A forward
+    // first-person view naturally presents that axis reversed on screen, so
+    // mirror the complete rendered world once at the view boundary.
+    glPushMatrix();
+    glDisable(GL_CULL_FACE);
+    glScalef(-1, 1, 1);
     campus::renderScene(labels_, debug_);
     glPushMatrix(); glTranslatef(-7, 3.2f, 34); glRotatef(rotationAngle_, 0, 1, 0);
     render::box({0,0,0},{3.0f,.08f,.22f},{.9f,.75f,.18f}); render::box({0,0,0},{.22f,.08f,3.0f},{.9f,.75f,.18f}); glPopMatrix();
@@ -84,6 +90,8 @@ void App::display() {
     glPushMatrix(); glTranslatef(demoPosition_.x, demoPosition_.y, demoPosition_.z); glRotatef(demoAngle_, 0, 1, 0); glScalef(demoScale_, demoScale_, demoScale_);
     render::box({0, 0, 0}, {1.3f, 1.3f, 1.3f}, {.88f, .48f, .19f});
     render::cylinder({0, .85f, 0}, .23f, .4f, {.32f, .8f, .92f}); glPopMatrix();
+    glEnable(GL_CULL_FACE);
+    glPopMatrix();
     glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity(); gluOrtho2D(0, width_, height_, 0);
     glMatrixMode(GL_MODELVIEW); glPushMatrix(); glLoadIdentity();
     render::text2d(16, 28, demo_ ? "TRANSFORM: arrows move, Q/E rotate, +/- scale, T exit" : "WASD move | R/Shift run | 0 reset | Space jump | O orbit campus | V top view | L labels | G bounds", {1, 1, 1});
@@ -102,7 +110,7 @@ void App::mouseMove(int x, int y) {
     const int cx = width_ / 2, cy = height_ / 2;
     if (ignoreMouseWarp_) { ignoreMouseWarp_ = false; return; }
     if (x == cx && y == cy) return;
-    player_.look((x - cx) * config::mouseSensitivity, (y - cy) * config::mouseSensitivity); ignoreMouseWarp_ = true; glutWarpPointer(cx, cy);
+    player_.look(-(x - cx) * config::mouseSensitivity, (y - cy) * config::mouseSensitivity); ignoreMouseWarp_ = true; glutWarpPointer(cx, cy);
 }
 void App::displayCallback() { instance().display(); }
 void App::reshapeCallback(int w, int h) { instance().reshape(w, h); }

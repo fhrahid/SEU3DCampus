@@ -1,10 +1,10 @@
 # Project status
 
-## Correction pass — PASS
+## Orientation correction — PASS
 
-The reference correction pass fixes the reported presentation problems. A/D now follow the visible camera basis (`A` screen-left, `D` screen-right). Room fronts have visible framed doors, gaming rooms have a main and internal door, every named room receives a ceiling, Stair 1/2/3 have physical steps, railings are present, and all four lift locations have steel split-door assemblies. The exterior now includes front/rear/left/right campus masses, surrounding trees/buildings, and an `O` orbit panorama for a full outside inspection.
+The reference correction pass fixes the reported presentation problems. The complete rendered campus is now mirrored at the view boundary so the plan's gaming room stays on the visible right and admission remains on the visible left. A/D and mouse look use the same screen basis (`A` screen-left, `D` screen-right). Room fronts have visible framed doors, gaming rooms have a main and internal door, every named room receives a ceiling, Stair 1/2/3 have physical steps, railings are present, and all four lift locations have steel split-door assemblies. The exterior now includes front/rear/left/right campus masses, surrounding trees/buildings, and an `O` orbit panorama for a full outside inspection.
 
-Build: corrected source compiles with C++17, `-Wall -Wextra -Werror`. Output tested as `SEU/bin/Debug/SEU-correction.exe`.
+Build: corrected source compiles with C++17, `-Wall -Wextra -Werror`. Output tested as `SEU/bin/Debug/SEU-orientation.exe`.
 
 Acceptance: reference direction mapping documented PASS; A/D screen movement PASS; doors PASS; ceilings PASS; all stairs PASS; lifts PASS; four-direction outside panorama PASS.
 
