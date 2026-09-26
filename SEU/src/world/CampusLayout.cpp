@@ -1,5 +1,6 @@
 #include "CampusLayout.h"
 #include "../render/Primitives.h"
+#include "Furniture.h"
 #include <GL/glut.h>
 #include <string>
 
@@ -90,6 +91,7 @@ void renderScene(bool showLabels, bool debugBounds) {
     room({11,16,17,24}, roomGreen, "STATIONERY", showLabels);
     room({-1,16,13.5f,17}, roomBlue, "GAMING 1", showLabels, true);
     room({-1,16,10,13.5f}, roomBlue, "GAMING 2", showLabels, true);
+    renderFurniture(showLabels);
     render::text3d({-23, floorY + .2f, 20}, "ADMISSION 1 / 2  BANK 1", {1, 1, 1});
     render::text3d({-23, floorY + .2f, 11}, "SECURITY", {1, 1, 1});
     if (debugBounds) {

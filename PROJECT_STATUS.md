@@ -1,5 +1,17 @@
 # Project status
 
+## Phase 04 — PASS
+
+Interior readability is implemented with reusable furniture primitives in `SEU/src/world/Furniture.*`: desks, counters, chairs, shelves, cafeteria tables, shop displays, lift doors, stair rails, and gaming tables. The furniture is placed in the supplied room relationships and remains lightweight. Gaming Room 1 and its inner Gaming Room 2 have visible table setups and transparent exterior-facing walls, so actual garden/driveway geometry remains visible through the glass.
+
+Build: complete source compiles cleanly with C++17, `-Wall -Wextra` and FreeGLUT/OpenGL. Output tested as `SEU/bin/Debug/SEU-interior.exe`.
+
+Acceptance: major room purpose readable from furniture/signage PASS; reusable furniture functions PASS; stair/counter/gaming/lift complex objects PASS; glass and exterior view path PASS; circulation not obstructed by large furniture PASS.
+
+Known limitations: materials are currently procedural OpenGL colors; texture assets and centralized texture loading are reserved for the graphics audit/polish phase.
+
+Next phase: Phase 05, grounded player movement.
+
 ## Phase 03 — PASS
 
 SEU-inspired exterior massing and landscape character are layered over the locked blockout. The facade now has terracotta and pale concrete masses, glazed bands, a right vertical core, entrance colonnade, SEU signage, paved driveways, garden trees, and gate structures.

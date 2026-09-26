@@ -48,6 +48,7 @@
 		<Unit filename="src/render/Camera.cpp" />
 		<Unit filename="src/render/Primitives.cpp" />
 		<Unit filename="src/world/CampusLayout.cpp" />
+		<Unit filename="src/world/Furniture.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>
