@@ -43,6 +43,10 @@
 			<Add directory="C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/lib" />
 		</Linker>
 		<Unit filename="main.cpp" />
+		<Unit filename="src/core/App.cpp" />
+		<Unit filename="src/core/Input.cpp" />
+		<Unit filename="src/render/Camera.cpp" />
+		<Unit filename="src/render/Primitives.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

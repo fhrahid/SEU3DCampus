@@ -1,0 +1,5 @@
+SEU/bin/
+SEU/obj/
+SEU/audit_min.cpp
+SEU/audit_min.exe
+build/

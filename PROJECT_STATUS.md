@@ -1,5 +1,21 @@
 # Project status
 
+## Phase 01 — PASS
+
+The modular FreeGLUT foundation is implemented. `SEU/main.cpp` is now a thin entry point, with separate input, camera, timing/bootstrap, and primitive-rendering modules. The debug scene has a perspective camera, frame-rate-independent WASD/free vertical movement, mouse look, lighting, grid/axes toggle, and a transform demonstration object.
+
+Files changed: `.gitignore`, `SEU/main.cpp`, `SEU/SEU.cbp`, `SEU/src/core/*`, `SEU/src/render/*`.
+
+Controls: WASD moves, Space/C moves vertically, click or M captures the mouse, G toggles grid/axes, T enters transform demo, arrow keys translate the demo object, Q/E rotate it, +/- scale it, Escape exits.
+
+Build: the complete source set compiles with C++17, `-Wall -Wextra`, MinGW 8.1.0, FreeGLUT, OpenGL, GLU, winmm and gdi32. The produced executable is `SEU/bin/Debug/SEU-foundation.exe`.
+
+Acceptance: clean build PASS; 3D window/bootstrap PASS; camera and resize path PASS; WASD debug camera PASS; grid/axes PASS; modular entry point PASS; model and view transforms visibly demonstrated PASS.
+
+Known limitations: rendering still contains only the foundation demo; campus blockout and collision are next. The installed FreeGLUT headers do not provide `glutLeaveMainLoop`, so Escape exits with `std::exit`.
+
+Next phase: Phase 02, campus blockout.
+
 ## Phase 00 — PASS
 
 The repository and all supplied references were audited. The current source is an unmodified GLUT shapes demo. Reference facts, ambiguous details, and an approximate coordinate scheme are recorded in `docs/REFERENCE_INTERPRETATION.md` and `docs/LAYOUT_COORDINATES.md`. The baseline source compiles with MinGW 8.1.0 and FreeGLUT.
