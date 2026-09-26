@@ -49,6 +49,7 @@
 		<Unit filename="src/render/Primitives.cpp" />
 		<Unit filename="src/world/CampusLayout.cpp" />
 		<Unit filename="src/world/Furniture.cpp" />
+		<Unit filename="src/player/Player.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

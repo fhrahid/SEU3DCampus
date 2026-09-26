@@ -25,6 +25,7 @@ void App::update(float dt) {
     if (input_.pressed('t')) demo_ = !demo_;
     if (input_.pressed('v')) topDown_ = !topDown_;
     if (input_.pressed('l')) labels_ = !labels_;
+    if (input_.pressed('0') && !demo_) player_.position = {-1.8f, 0, 6.3f};
     if (input_.pressed('m')) {
         mouseCaptured_ = !mouseCaptured_;
         glutSetCursor(mouseCaptured_ ? GLUT_CURSOR_NONE : GLUT_CURSOR_INHERIT);
@@ -40,16 +41,7 @@ void App::update(float dt) {
         if (input_.held('e')) demoAngle_ -= 75 * dt;
         if (input_.held('+') || input_.held('=')) demoScale_ = std::min(3.0f, demoScale_ + dt);
         if (input_.held('-')) demoScale_ = std::max(.25f, demoScale_ - dt);
-    } else {
-        Vec3 forward = camera_.forward(); forward.y = 0;
-        const Vec3 right = camera_.right();
-        if (input_.held('w')) camera_.position = camera_.position + forward * speed;
-        if (input_.held('s')) camera_.position = camera_.position - forward * speed;
-        if (input_.held('d')) camera_.position = camera_.position + right * speed;
-        if (input_.held('a')) camera_.position = camera_.position - right * speed;
-        if (input_.held(' ')) camera_.position.y += speed;
-        if (input_.held('c')) camera_.position.y -= speed;
-    }
+    } else player_.update(input_, dt);
     input_.endFrame();
 }
 void App::setupLighting() {
@@ -67,7 +59,8 @@ void App::setupLighting() {
 void App::display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW); glLoadIdentity();
-    if (topDown_) gluLookAt(0, 52, 20, 0, 0, 20, 0, 0, -1); else camera_.applyView();
+    if (topDown_) gluLookAt(0, 52, 20, 0, 0, 20, 0, 0, -1);
+    else { camera_.position = player_.eyePosition(); camera_.yaw = player_.yaw; camera_.pitch = player_.pitch; camera_.applyView(); }
     setupLighting();
     campus::renderScene(labels_, debug_);
     if (debug_) { render::grid(24, 2); render::axes(3); }
@@ -76,7 +69,8 @@ void App::display() {
     render::cylinder({0, .85f, 0}, .23f, .4f, {.32f, .8f, .92f}); glPopMatrix();
     glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity(); gluOrtho2D(0, width_, height_, 0);
     glMatrixMode(GL_MODELVIEW); glPushMatrix(); glLoadIdentity();
-    render::text2d(16, 28, demo_ ? "TRANSFORM: arrows move, Q/E rotate, +/- scale, T exit" : "WASD move | M mouse | V top view | L labels | G bounds | T demo", {1, 1, 1});
+    render::text2d(16, 28, demo_ ? "TRANSFORM: arrows move, Q/E rotate, +/- scale, T exit" : "WASD move | R/Shift run | 0 reset | Space jump | M mouse | V top view | L labels | G bounds", {1, 1, 1});
+    if (!demo_) render::text2d(16, 52, player_.stateName(), {1, .85f, .25f});
     glPopMatrix(); glMatrixMode(GL_PROJECTION); glPopMatrix(); glMatrixMode(GL_MODELVIEW); glutSwapBuffers();
 }
 void App::reshape(int width, int height) {
@@ -88,7 +82,7 @@ void App::mouseMove(int x, int y) {
     const int cx = width_ / 2, cy = height_ / 2;
     if (ignoreMouseWarp_) { ignoreMouseWarp_ = false; return; }
     if (x == cx && y == cy) return;
-    camera_.look((x - cx) * config::mouseSensitivity, (y - cy) * config::mouseSensitivity); ignoreMouseWarp_ = true; glutWarpPointer(cx, cy);
+    player_.look((x - cx) * config::mouseSensitivity, (y - cy) * config::mouseSensitivity); ignoreMouseWarp_ = true; glutWarpPointer(cx, cy);
 }
 void App::displayCallback() { instance().display(); }
 void App::reshapeCallback(int w, int h) { instance().reshape(w, h); }

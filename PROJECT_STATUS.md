@@ -1,5 +1,17 @@
 # Project status
 
+## Phase 05 — PASS
+
+The first-person `Player` controller is implemented in `SEU/src/player/Player.*`. It has grounded eye-height movement, walk/run speeds, jump and gravity, fall/land handling, movement states, reset, mouse look, and a Stair 1 height profile that smoothly raises and lowers the player between driveway and floor level. The on-screen state label makes Idle, Walk, Run, Jump, Fall and Stair observable.
+
+Build: complete source compiles cleanly with C++17, `-Wall -Wextra` and FreeGLUT/OpenGL. Output tested as `SEU/bin/Debug/SEU-player.exe`.
+
+Acceptance: frame-rate-scaled movement PASS; walk/run/jump/fall state path PASS; grounded-only jump PASS; Stair 1 ascent/descent height transition PASS; no free-flight controls in normal player mode PASS.
+
+Known limitations: wall and furniture blocking are intentionally deferred to Phase 06; `R` is a run fallback because some GLUT versions do not report Shift as a normal key, while `Shift` is also accepted when exposed by the platform.
+
+Next phase: Phase 06, collision and robust navigation.
+
 ## Phase 04 — PASS
 
 Interior readability is implemented with reusable furniture primitives in `SEU/src/world/Furniture.*`: desks, counters, chairs, shelves, cafeteria tables, shop displays, lift doors, stair rails, and gaming tables. The furniture is placed in the supplied room relationships and remains lightweight. Gaming Room 1 and its inner Gaming Room 2 have visible table setups and transparent exterior-facing walls, so actual garden/driveway geometry remains visible through the glass.
