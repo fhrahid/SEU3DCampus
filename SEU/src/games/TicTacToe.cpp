@@ -13,10 +13,11 @@ int TicTacToe::winner() const {
 void TicTacToe::update(const Input& input) {
     if (input.pressed('n')) { reset(); return; }
     if (result_) return;
-    if (input.specialHeld(GLUT_KEY_LEFT) && cursor_ % 3) --cursor_;
-    if (input.specialHeld(GLUT_KEY_RIGHT) && cursor_ % 3 < 2) ++cursor_;
-    if (input.specialHeld(GLUT_KEY_UP) && cursor_ >= 3) cursor_ -= 3;
-    if (input.specialHeld(GLUT_KEY_DOWN) && cursor_ < 6) cursor_ += 3;
+    // Arrow or WASD keys navigate cursor; 1-9 directly jumps to cell.
+    if ((input.specialPressed(GLUT_KEY_LEFT) || input.pressed('a')) && cursor_ % 3) --cursor_;
+    if ((input.specialPressed(GLUT_KEY_RIGHT) || input.pressed('d')) && cursor_ % 3 < 2) ++cursor_;
+    if ((input.specialPressed(GLUT_KEY_UP) || input.pressed('w')) && cursor_ >= 3) cursor_ -= 3;
+    if ((input.specialPressed(GLUT_KEY_DOWN) || input.pressed('s')) && cursor_ < 6) cursor_ += 3;
     for (int i = 0; i < 9; ++i) if (input.pressed(static_cast<unsigned char>('1' + i))) cursor_ = i;
     if (input.pressed(' ') || input.pressed(13)) {
         if (!board_[cursor_]) { board_[cursor_] = turn_; result_ = winner(); if (!result_) turn_ = 3 - turn_; }
@@ -24,7 +25,7 @@ void TicTacToe::update(const Input& input) {
 }
 void TicTacToe::render(int, int) const {
     render::text2d(55, 75, "TIC-TAC-TOE", {1,.85f,.25f});
-    render::text2d(55, 110, "Two players: arrows or 1-9 select, Space/Enter place, N new, Esc menu", {1,1,1});
+    render::text2d(55, 110, "Two players: WASD/arrows or 1-9 select, Space/Enter place, N new, Esc menu", {1,1,1});
     glDisable(GL_LIGHTING); glColor3f(.8f,.85f,.9f);
     glBegin(GL_LINES);
     for (int i=1;i<3;++i) { glVertex2i(55+i*90,150); glVertex2i(55+i*90,420); glVertex2i(55,150+i*90); glVertex2i(325,150+i*90); }

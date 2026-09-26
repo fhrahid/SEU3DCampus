@@ -8,7 +8,7 @@ class GameManager {
 public:
     bool active() const { return active_; }
     bool playing() const { return game_ != -1; }
-    void enter();
+    void enter(int initialGame = -1);
     void update(const Input& input);
     void render(int width, int height) const;
 private:

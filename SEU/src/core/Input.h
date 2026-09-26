@@ -8,10 +8,12 @@ public:
     void specialUp(int key);
     bool held(unsigned char key) const;
     bool pressed(unsigned char key) const;
+    bool specialPressed(int specialKey) const;
     bool specialHeld(int key) const;
     void endFrame();
 private:
     std::array<bool, 256> keys_{};
     std::array<bool, 256> presses_{};
     std::array<bool, 256> special_{};
+    std::array<bool, 256> specialPresses_{};
 };

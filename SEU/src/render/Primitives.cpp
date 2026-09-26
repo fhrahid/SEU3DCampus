@@ -43,9 +43,34 @@ void cylinder(Vec3 center, float radius, float height, Color color) {
     glPopMatrix();
 }
 void stairs(Vec3 foot, float width, float rise, float depth, int count, Color color) {
+    const Color treadCol{.92f, .94f, .96f};      // Polished marble/granite stair tread top
+    const Color nosingCol{.85f, .42f, .12f};     // High-visibility safety nosing edge strip (SEU terracotta)
+    const Color stringerCol{.28f, .30f, .34f};   // Steel/concrete architectural side carriage stringers
+
+    const float totalH = rise * count;
+    const float totalD = depth * count;
+    const float midY = foot.y + totalH * 0.5f;
+    const float midZ = foot.z + totalD * 0.5f;
+    const float stringerW = 0.08f;
+    const float halfW = width * 0.5f;
+
+    // Structural carriage stringer beams along the staircase sides
+    box({foot.x - halfW - stringerW * 0.5f, midY, midZ}, {stringerW, totalH * 0.45f, totalD}, stringerCol);
+    box({foot.x + halfW + stringerW * 0.5f, midY, midZ}, {stringerW, totalH * 0.45f, totalD}, stringerCol);
+
     for (int i = 0; i < count; ++i) {
+        const float topY = foot.y + rise * (i + 1);
+        const float z = foot.z + depth * (i + 0.5f);
         const float h = rise * (i + 1);
-        box({foot.x, foot.y + h * .5f, foot.z + depth * (i + .5f)}, {width, h, depth}, color);
+
+        // Solid riser base block
+        box({foot.x, foot.y + h * 0.5f, z}, {width, h, depth}, color);
+
+        // Polished architectural step tread slab on top (slightly overhanging)
+        box({foot.x, topY + 0.015f, z}, {width + 0.04f, 0.03f, depth + 0.03f}, treadCol);
+
+        // High-contrast safety nosing strip on the leading edge of tread
+        box({foot.x, topY + 0.02f, z - depth * 0.5f + 0.01f}, {width + 0.04f, 0.022f, 0.025f}, nosingCol);
     }
 }
 void glassPanel(Vec3 center, Vec3 size, Color color) {
