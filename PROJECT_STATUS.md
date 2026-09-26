@@ -1,5 +1,15 @@
 # Project status
 
+## Phase 12 — PASS
+
+Ludo now has a stable local player-versus-CPU implementation with a recognizable board, four tokens per side, dice rolls, six-to-launch, legal movement, turn handoff, CPU turns, home progress, win detection and reset. The overlay highlights the active turn and token positions; the selected rules are documented in `docs/LUDO_RULES.md`.
+
+Build: complete source compiles cleanly with C++17, `-Wall -Wextra` and FreeGLUT/OpenGL. Output tested as `SEU/bin/Debug/SEU-ludo.exe`.
+
+Acceptance: board and tokens PASS; legal roll/movement path PASS; player/CPU turn progression PASS; home/winner path PASS; reset and game input lock PASS.
+
+Next phase: Phase 13, visual polish and graphics-course audit.
+
 ## Phase 11 — PASS
 
 Rubik’s Cube now has a six-face 3×3 facelet representation, clockwise and inverse quarter-turns, move count, scramble, reset, solved detection, and an overlay net with six face colors. `U/D/L/R/F/B` turn faces, `I` held reverses the turn, `X` scrambles, and `N` resets. Four turns of a face restore its facelet orientation and move state remains synchronized.
