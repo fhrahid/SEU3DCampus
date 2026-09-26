@@ -1,5 +1,15 @@
 # Project status
 
+## Phase 09 — PASS
+
+Tic-Tac-Toe and Rock Paper Scissors now have complete rule loops. Tic-Tac-Toe supports a 3×3 board, cursor or number selection, occupied-cell rejection, alternating local players, win/draw detection and replay. Rock Paper Scissors uses CPU random choice, correct modulo-three outcomes, score tracking and reset. Both render their live state in the game overlay and retain Escape-to-menu behavior.
+
+Build: complete source compiles cleanly with C++17, `-Wall -Wextra` and FreeGLUT/OpenGL. Output tested as `SEU/bin/Debug/SEU-games09.exe`.
+
+Acceptance: legal Tic-Tac-Toe moves and win/draw paths PASS; repeated RPS rounds and scores PASS; game input remains isolated from player movement PASS; game exit route PASS.
+
+Next phase: Phase 10, 2048.
+
 ## Phase 08 — PASS
 
 The shared `MiniGame` interface, `GameManager`, five separate game classes, game menu and overlay are in place. Gaming-room triggers open the menu; 1–5 open each named game placeholder; Escape returns to the menu and then the campus. While the game overlay is active, campus movement and interactions receive no updates, and the same GLUT window/callbacks remain in use.

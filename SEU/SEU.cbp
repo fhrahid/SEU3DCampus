@@ -54,6 +54,8 @@
 		<Unit filename="src/interaction/InteractionSystem.cpp" />
 		<Unit filename="src/games/GameManager.cpp" />
 		<Unit filename="src/games/Placeholders.cpp" />
+		<Unit filename="src/games/TicTacToe.cpp" />
+		<Unit filename="src/games/RockPaperScissors.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>
