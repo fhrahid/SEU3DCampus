@@ -1,5 +1,15 @@
 # Project status
 
+## Exterior facade view correction — PASS
+
+Added a dedicated SEU facade presentation view based on the supplied exterior photograph. The front elevation now includes the terracotta tower, glazed curtain wall with mullions and horizontal bands, pale SEU sign tower, window grid, right wing, entrance canopy, columns, glazing and bilingual signage. Press `F` to inspect the facade from a fixed front camera; `O` still orbits the full campus.
+
+Build: source compiles with C++17, `-Wall -Wextra -Werror`. Output tested as `SEU/bin/Debug/SEU-facade.exe`.
+
+Acceptance: photograph-inspired front facade PASS; fixed facade camera PASS; exterior lighting/glazing/signage PASS; previous interior and top-view controls preserved PASS.
+
+Next step: run `F`, `O`, and `V` in the desktop executable to compare the exterior, panorama and plan views against the supplied references.
+
 ## Interior finish and gaming-suite correction — PASS
 
 The interior finish now uses bright white ceramic tile floors, off-white tiled walls and designed ceiling panels with perimeter beams and recessed warm lights. Top-down mode hides ceilings so the reference gate layout remains inspectable. Gaming Room 1 and Gaming Room 2 are rebuilt as one large outer suite with a shared glass envelope, real internal partition, internal door, main entry and dedicated carrom, table-tennis, pool, chess, cube and ludo setups.

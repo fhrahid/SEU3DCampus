@@ -120,6 +120,32 @@ void exteriorFacade(bool labels) {
     }
     if (labels) render::text3d({-3.0f, 4.45f, 10.0f}, "SOUTHEAST UNIVERSITY", {1, 1, 1});
 }
+void frontPhotoFacade(bool labels) {
+    // Front elevation based on the supplied SEU photograph: terracotta tower,
+    // glazed atrium, pale SEU sign core and a lighter right-hand wing.
+    render::texturedBox({-18.5f, 8.0f, 9.35f}, {6.8f, 12.0f, 1.0f}, {.58f, .22f, .14f}, 1);
+    render::box({-10.0f, 7.4f, 9.0f}, {9.0f, 10.6f, .35f}, {.78f, .8f, .82f});
+    render::glassPanel({-9.0f, 7.4f, 8.78f}, {8.2f, 9.8f, .08f}, {.34f, .7f, .78f, .62f});
+    render::box({3.0f, 8.0f, 9.25f}, {6.2f, 12.0f, 1.0f}, {.82f, .83f, .83f});
+    render::box({11.0f, 7.0f, 9.35f}, {7.0f, 10.5f, 1.0f}, {.76f, .78f, .8f});
+    render::glassPanel({11.0f, 6.9f, 8.78f}, {5.8f, 8.9f, .08f}, {.35f, .7f, .78f, .58f});
+    // Curtain-wall mullions and horizontal floor bands.
+    for (float x = -12.5f; x <= -5.5f; x += 1.4f) render::box({x, 7.4f, 8.68f}, {.08f, 9.6f, .06f}, {.7f, .78f, .8f});
+    for (float y = 4.2f; y <= 11.2f; y += 1.55f) render::box({-9.0f, y, 8.65f}, {8.2f, .08f, .07f}, {.72f, .77f, .8f});
+    for (int row = 0; row < 8; ++row) for (int col = 0; col < 3; ++col)
+        render::box({1.2f + col * 1.7f, 4.0f + row * 1.1f, 8.68f}, {.55f, .45f, .06f}, {.12f, .14f, .16f});
+    for (int row = 0; row < 6; ++row) for (int col = 0; col < 3; ++col)
+        render::box({9.1f + col * 1.8f, 4.2f + row * 1.25f, 8.68f}, {.95f, .58f, .06f}, {.12f, .14f, .16f});
+    render::texturedBox({4.3f, 12.5f, 8.65f}, {3.5f, .85f, .08f}, {.18f, .22f, .28f}, 3);
+    render::text3d({4.9f, 12.55f, 8.58f}, "S E U", {1, 1, 1});
+    render::box({-18.5f, 3.2f, 8.72f}, {4.8f, .35f, 2.8f}, {.22f, .24f, .26f});
+    for (float x = -15.5f; x <= 5.5f; x += 3.5f) render::cylinder({x, 2.0f, 8.55f}, .2f, 4.0f, {.8f, .81f, .82f});
+    render::glassPanel({-5.2f, 2.5f, 8.5f}, {7.5f, 3.0f, .08f}, {.35f, .7f, .78f, .58f});
+    if (labels) {
+        render::text3d({-21.3f, 7.0f, 8.55f}, "SOUTHEAST UNIVERSITY", {1, 1, 1});
+        render::text3d({-21.3f, 6.45f, 8.55f}, "SOUTHEAST UNIVERSITY", {.95f, .95f, .95f});
+    }
+}
 void surroundingCampus() {
     const Color distant{.36f, .4f, .44f};
     // Low neighboring masses and tree rows keep the outside view meaningful
@@ -140,6 +166,7 @@ void renderScene(bool showLabels, bool debugBounds, bool ceilings) {
     render::plane({20, .04f, 24}, {8, 0, 34}, driveway);
     surroundingCampus();
     exteriorFacade(showLabels);
+    frontPhotoFacade(showLabels);
     gate(-19, "IN GATE"); gate(20, "OUT GATE");
     // Orange access markers copied from the supplied top view. Coordinates
     // use the same plan mapping documented in LAYOUT_COORDINATES.md.

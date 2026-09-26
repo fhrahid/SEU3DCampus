@@ -32,6 +32,7 @@ void App::update(float dt) {
     if (input_.pressed('v')) topDown_ = !topDown_;
     if (input_.pressed('l')) labels_ = !labels_;
     if (input_.pressed('o')) panorama_ = !panorama_;
+    if (input_.pressed('f')) { facadeView_ = !facadeView_; panorama_ = false; topDown_ = false; }
     if (input_.pressed('0') && !demo_) player_.position = {-1.8f, 0, 6.3f};
     if (input_.pressed('m')) {
         mouseCaptured_ = !mouseCaptured_;
@@ -70,7 +71,9 @@ void App::setupLighting() {
 void App::display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW); glLoadIdentity();
-    if (panorama_) {
+    if (facadeView_) {
+        gluLookAt(0, 7.0f, -31.0f, 0, 5.5f, 9.0f, 0, 1, 0);
+    } else if (panorama_) {
         const float angle = orbitAngle_ * .0174532925f;
         gluLookAt(-std::cos(angle) * 58.0f, 24.0f, 20.0f + std::sin(angle) * 58.0f, 0, 2.0f, 20.0f, 0, 1, 0);
     } else if (topDown_) gluLookAt(0, 52, 20, 0, 0, 20, 0, 0, 1);
@@ -94,7 +97,7 @@ void App::display() {
     glPopMatrix();
     glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity(); gluOrtho2D(0, width_, height_, 0);
     glMatrixMode(GL_MODELVIEW); glPushMatrix(); glLoadIdentity();
-    render::text2d(16, 28, demo_ ? "TRANSFORM: arrows move, Q/E rotate, +/- scale, T exit" : "WASD move | R/Shift run | 0 reset | Space jump | O orbit campus | V top view | L labels | G bounds", {1, 1, 1});
+    render::text2d(16, 28, demo_ ? "TRANSFORM: arrows move, Q/E rotate, +/- scale, T exit" : "WASD move | R/Shift run | 0 reset | F facade view | O orbit | V top view | L labels | G bounds", {1, 1, 1});
     if (!demo_) render::text2d(16, 52, player_.stateName(), {1, .85f, .25f});
     if (!demo_ && interaction_.prompt()[0] != '\0') render::text2d(16, 78, interaction_.prompt(), {1, 1, 1});
     glPopMatrix(); glMatrixMode(GL_PROJECTION); glPopMatrix(); glMatrixMode(GL_MODELVIEW);
