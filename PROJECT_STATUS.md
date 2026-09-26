@@ -1,5 +1,17 @@
 # Project status
 
+## Phase 02 — PASS
+
+The reference-driven campus blockout is implemented in `SEU/src/world/CampusLayout.*`. It includes the exterior site, front and right driveways, garden trees, IN/OUT gates, guard room, Stair 1, Punch Gate, central room distribution, named room volumes, lifts, static Stairs 2/3, and nested Admission/Gaming room representations. `V` toggles a top-down camera, `L` toggles room labels, and `G` toggles debug outlines/grid. A second warm interior light is active alongside the exterior light.
+
+Build: complete source set compiles cleanly with C++17, `-Wall -Wextra` and the installed FreeGLUT/OpenGL libraries. Output tested as `SEU/bin/Debug/SEU-blockout.exe`.
+
+Acceptance: site and driveways PASS; garden and gates PASS; Stair 1 and Punch Gate PASS; all named room zones represented PASS; nested admission and gaming relationships represented PASS; top-down inspection and labels PASS; no unsupported room or exterior floor added PASS.
+
+Known limitations: this phase is a visual blockout. The free camera can pass through walls until the player and collision phases add a constrained character controller. Room doors are represented by planned openings/visual boundaries and will be refined with interaction geometry.
+
+Next phase: Phase 03, exterior architecture and landscape.
+
 ## Phase 01 — PASS
 
 The modular FreeGLUT foundation is implemented. `SEU/main.cpp` is now a thin entry point, with separate input, camera, timing/bootstrap, and primitive-rendering modules. The debug scene has a perspective camera, frame-rate-independent WASD/free vertical movement, mouse look, lighting, grid/axes toggle, and a transform demonstration object.

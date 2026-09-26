@@ -1,6 +1,7 @@
 #pragma once
 #include "Input.h"
 #include "../render/Camera.h"
+#include "../world/CampusLayout.h"
 class App {
 public:
     static App& instance();
@@ -9,7 +10,7 @@ private:
     Input input_;
     Camera camera_;
     int width_ = 1280, height_ = 720, lastTimeMs_ = 0;
-    bool debug_ = true, demo_ = false, mouseCaptured_ = false, ignoreMouseWarp_ = false;
+    bool debug_ = true, demo_ = false, topDown_ = false, labels_ = true, mouseCaptured_ = false, ignoreMouseWarp_ = false;
     Vec3 demoPosition_{0, 1, 4};
     float demoAngle_ = 0, demoScale_ = 1;
     App() = default;

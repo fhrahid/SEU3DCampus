@@ -23,6 +23,8 @@ void App::update(float dt) {
     if (input_.pressed(27)) { std::exit(EXIT_SUCCESS); }
     if (input_.pressed('g')) debug_ = !debug_;
     if (input_.pressed('t')) demo_ = !demo_;
+    if (input_.pressed('v')) topDown_ = !topDown_;
+    if (input_.pressed('l')) labels_ = !labels_;
     if (input_.pressed('m')) {
         mouseCaptured_ = !mouseCaptured_;
         glutSetCursor(mouseCaptured_ ? GLUT_CURSOR_NONE : GLUT_CURSOR_INHERIT);
@@ -57,18 +59,24 @@ void App::setupLighting() {
     glEnable(GL_LIGHTING); glEnable(GL_LIGHT0);
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, sun); glLightfv(GL_LIGHT0, GL_SPECULAR, sun); glLightfv(GL_LIGHT0, GL_POSITION, direction);
+    const GLfloat interior[] = {1.0f, .72f, .42f, 1};
+    const GLfloat point[] = {0, 5, 18, 1};
+    glEnable(GL_LIGHT1);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, interior); glLightfv(GL_LIGHT1, GL_SPECULAR, interior); glLightfv(GL_LIGHT1, GL_POSITION, point);
 }
 void App::display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glMatrixMode(GL_MODELVIEW); glLoadIdentity(); camera_.applyView(); setupLighting();
-    render::plane({0, -.03f, 0}, {32, 0, 32}, {.26f, .3f, .34f});
-    if (debug_) { render::grid(16, 1); render::axes(3); }
+    glMatrixMode(GL_MODELVIEW); glLoadIdentity();
+    if (topDown_) gluLookAt(0, 52, 20, 0, 0, 20, 0, 0, -1); else camera_.applyView();
+    setupLighting();
+    campus::renderScene(labels_, debug_);
+    if (debug_) { render::grid(24, 2); render::axes(3); }
     glPushMatrix(); glTranslatef(demoPosition_.x, demoPosition_.y, demoPosition_.z); glRotatef(demoAngle_, 0, 1, 0); glScalef(demoScale_, demoScale_, demoScale_);
     render::box({0, 0, 0}, {1.3f, 1.3f, 1.3f}, {.88f, .48f, .19f});
     render::cylinder({0, .85f, 0}, .23f, .4f, {.32f, .8f, .92f}); glPopMatrix();
     glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity(); gluOrtho2D(0, width_, height_, 0);
     glMatrixMode(GL_MODELVIEW); glPushMatrix(); glLoadIdentity();
-    render::text2d(16, 28, demo_ ? "TRANSFORM: arrows move, Q/E rotate, +/- scale, T exit" : "FREE CAMERA: WASD move, Space/C vertical, M mouse, G grid, T transform", {1, 1, 1});
+    render::text2d(16, 28, demo_ ? "TRANSFORM: arrows move, Q/E rotate, +/- scale, T exit" : "WASD move | M mouse | V top view | L labels | G bounds | T demo", {1, 1, 1});
     glPopMatrix(); glMatrixMode(GL_PROJECTION); glPopMatrix(); glMatrixMode(GL_MODELVIEW); glutSwapBuffers();
 }
 void App::reshape(int width, int height) {
