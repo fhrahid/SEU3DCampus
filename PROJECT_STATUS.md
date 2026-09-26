@@ -1,5 +1,13 @@
 # Project status
 
+## Phase 13A — PASS
+
+The mandatory course graphics audit is recorded in `docs/GRAPHICS_REQUIREMENTS.md`. Every required row is mapped to source, controls/location, and a live demonstration procedure: transformations, complex objects, continuous rotation, exterior view through glass, two lights, material properties, model/view transforms, procedural textures, and algorithmic mini-games.
+
+Acceptance: all matrix rows PASS; no undocumented graphics requirement remains.
+
+Next phase: Phase 14, optimization and QA.
+
 ## Phase 13 — PASS
 
 Procedural checker textures are centralized in `TextureManager`, scoped through `texturedBox`, and applied to room floors, the terracotta facade and furniture. The campus has two simultaneous lights, reusable material properties, a delta-time rotating display, visible glass-to-exterior views, and a transform demo.
