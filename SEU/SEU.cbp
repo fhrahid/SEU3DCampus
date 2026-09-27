@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="SEU" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/SEU" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/bin" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/SEU" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/bin" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include" />
+		</Compiler>
+		<Linker>
+			<Add library="freeglut" />
+			<Add library="opengl32" />
+			<Add library="glu32" />
+			<Add library="winmm" />
+			<Add library="gdi32" />
+			<Add directory="C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/lib" />
+		</Linker>
+		<Unit filename="main.cpp" />
+		<Unit filename="src/core/App.cpp" />
+		<Unit filename="src/core/Input.cpp" />
+		<Unit filename="src/render/Camera.cpp" />
+		<Unit filename="src/render/Primitives.cpp" />
+		<Unit filename="src/render/TextureManager.cpp" />
+		<Unit filename="src/world/CampusLayout.cpp" />
+		<Unit filename="src/world/Furniture.cpp" />
+		<Unit filename="src/player/Player.cpp" />
+		<Unit filename="src/physics/CollisionWorld.cpp" />
+		<Unit filename="src/interaction/InteractionSystem.cpp" />
+		<Unit filename="src/games/GameManager.cpp" />
+		<Unit filename="src/games/TicTacToe.cpp" />
+		<Unit filename="src/games/RockPaperScissors.cpp" />
+		<Unit filename="src/games/Game2048.cpp" />
+		<Unit filename="src/games/RubiksCube.cpp" />
+		<Unit filename="src/games/Ludo.cpp" />
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
