@@ -18,15 +18,15 @@ const Color terracotta{.72f, .30f, .15f};
 const Color terracottaGroove{.50f, .18f, .08f};
 const Color terracottaCap{.42f, .15f, .07f};
 const Color rustOrange{.90f, .42f, .08f};
-const Color roomOrange{.76f, .32f, .14f};
+const Color roomOrange{.55f, .18f, .12f};
 
 // Tone 2: Concrete Gray / Off-White: Right concrete tower, floor slabs, pilotis, walls
 const Color concreteGray{.76f, .78f, .80f};
 const Color concreteSlab{.84f, .85f, .87f};
 const Color concreteOffWhite{.88f, .89f, .91f};
 const Color structuralPilotis{.86f, .88f, .90f};
-const Color wall{.91f, .92f, .94f};
-const Color roomWhite{.91f, .92f, .94f};
+const Color wall{.55f, .18f, .12f};
+const Color roomWhite{.55f, .18f, .12f};
 const Color tileFloor{.92f, .93f, .95f};
 const Color surroundingConcrete{.74f, .76f, .78f};
 
@@ -36,14 +36,14 @@ const Color reflectiveSteelBlue{.24f, .54f, .68f};
 const Color highRiseGlass{.22f, .60f, .75f, .65f};
 const Color glass{.20f, .74f, .85f, .38f};
 const Color chrome{.88f, .90f, .94f};
-const Color roomSteel{.47f, .55f, .62f};
+const Color roomSteel{.55f, .18f, .12f};
 
 // Tone 4: Deep Forest & Olive Green: Lush tree canopies and ground foliage
 const Color deepForestGreen{.11f, .32f, .13f};
 const Color oliveGreen{.22f, .44f, .16f};
 const Color gardenGreen{.14f, .38f, .16f};
 const Color hedgeGreen{.12f, .34f, .14f};
-const Color roomGreen{.18f, .44f, .22f};
+const Color roomGreen{.55f, .18f, .12f};
 
 // Tone 6: Earthy Brown & Dark Charcoal: Paved ground, driveways, rooftops, roads
 const Color earthyBrownPaved{.56f, .50f, .40f};
@@ -318,17 +318,17 @@ void ceilingDecor(const Rect& r, float baseFloor = floorY) {
 void room(const Rect& r, Color roomColor, const char* name, bool labels, bool glassFront = true, bool frontDoor = true, float baseFloor = floorY) {
     render::texturedBox({(r.minX + r.maxX) * .5f, baseFloor, (r.minZ + r.maxZ) * .5f}, {r.maxX-r.minX, .1f, r.maxZ-r.minZ}, tileFloor, 0);
     const float y = baseFloor + wallHeight * .5f;
-    render::box({r.minX, y, (r.minZ+r.maxZ)*.5f}, {wallThickness, wallHeight, r.maxZ-r.minZ}, roomColor);
-    render::box({r.maxX, y, (r.minZ+r.maxZ)*.5f}, {wallThickness, wallHeight, r.maxZ-r.minZ}, roomColor);
-    render::box({(r.minX+r.maxX)*.5f, y, r.maxZ}, {r.maxX-r.minX, wallHeight, wallThickness}, roomColor);
+    render::texturedBox({r.minX, y, (r.minZ+r.maxZ)*.5f}, {wallThickness, wallHeight, r.maxZ-r.minZ}, roomColor, 4);
+    render::texturedBox({r.maxX, y, (r.minZ+r.maxZ)*.5f}, {wallThickness, wallHeight, r.maxZ-r.minZ}, roomColor, 4);
+    render::texturedBox({(r.minX+r.maxX)*.5f, y, r.maxZ}, {r.maxX-r.minX, wallHeight, wallThickness}, roomColor, 4);
     const float center = (r.minX + r.maxX) * .5f;
     const float doorHalf = .95f; // 1.9m wide entrance opening
     if (glassFront) {
         render::glassPanel({(r.minX + center - doorHalf) * .5f, y, r.minZ}, {center - doorHalf - r.minX, wallHeight, .08f}, glass);
         render::glassPanel({(center + doorHalf + r.maxX) * .5f, y, r.minZ}, {r.maxX - center - doorHalf, wallHeight, .08f}, glass);
     } else {
-        render::box({(r.minX + center - doorHalf) * .5f, y, r.minZ}, {center - doorHalf - r.minX, wallHeight, wallThickness}, roomColor);
-        render::box({(center + doorHalf + r.maxX) * .5f, y, r.minZ}, {r.maxX - center - doorHalf, wallHeight, wallThickness}, roomColor);
+        render::texturedBox({(r.minX + center - doorHalf) * .5f, y, r.minZ}, {center - doorHalf - r.minX, wallHeight, wallThickness}, roomColor, 4);
+        render::texturedBox({(center + doorHalf + r.maxX) * .5f, y, r.minZ}, {r.maxX - center - doorHalf, wallHeight, wallThickness}, roomColor, 4);
     }
     if (frontDoor) architecturalGlassDoor(center, r.minZ, 1.9f, name, glassFront, baseFloor);
     if (showCeilings) ceilingDecor(r, baseFloor);
@@ -602,6 +602,10 @@ void thirdFloorStructure(bool labels) {
     render::texturedBox({11.8f, floor3Y, 25.0f}, {9.6f, .12f, 30.5f}, tileFloor, 0);
     render::texturedBox({0.0f, floor3Y, 34.0f}, {14.0f, .12f, 12.0f}, tileFloor, 0);
     render::texturedBox({-2.5f, floor3Y, 11.5f}, {15.0f, .12f, 4.0f}, tileFloor, 0);
+
+    // Stair 2 continues from Floor 3 to the Floor 4 executive level.
+    render::stairs({6.8f, floor3Y, 28.2f}, 2.4f, .25f, .25f, 16, concreteGray);
+    if (labels) render::text3d({5.5f, floor3Y + .5f, 27.8f}, "STAIR 2 -> FLOOR 4", {1, .90f, .25f});
 
     // 2. Central Atrium Void Balustrades (Guarded by polished safety glass balustrades with chrome railings)
     const Color glassRail{.24f, .72f, .84f, .45f};
@@ -1039,8 +1043,8 @@ void renderScene(bool showLabels, bool debugBounds, bool ceilings) {
     // =========================================================================
     // STAIR 2: Secondary 16-Step Staircase to SECOND FLOOR
     // =========================================================================
-    render::stairs({11.8f, floorY, 28.2f}, 2.4f, .25f, .25f, 16, concreteGray);
-    if (showLabels) render::text3d({10.5f, floorY + .5f, 27.8f}, "STAIR 2 -> FLOOR 2", {1, .90f, .25f});
+    render::stairs({6.8f, floorY, 28.2f}, 2.4f, .25f, .25f, 16, concreteGray);
+    if (showLabels) render::text3d({5.5f, floorY + .5f, 27.8f}, "STAIR 2 -> FLOOR 2", {1, .90f, .25f});
 
     room({13.4f,16.6f,25.0f,28.1f}, roomWhite, "MALE WASHROOM", showLabels);
     room({7.4f,12.0f,18.2f,22.2f}, roomOrange, "BANK 2", showLabels, true);

@@ -21,11 +21,32 @@ void box(Vec3 center, Vec3 size, Color color) {
     glPopMatrix();
 }
 void texturedBox(Vec3 center, Vec3 size, Color color, int textureType) {
-    material(color); glEnable(GL_TEXTURE_2D); TextureManager::instance().bind(static_cast<TextureManager::Type>(textureType));
+    const bool brick = textureType == static_cast<int>(TextureManager::Type::Brick);
+    // Let the generated material remain visible. Multiplying the brick
+    // texture by the already-dark red wall color made it appear almost flat.
+    material(brick ? Color{1, 1, 1, color.a} : color);
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    TextureManager::instance().bind(static_cast<TextureManager::Type>(textureType));
     glPushMatrix(); glTranslatef(center.x,center.y,center.z); glScalef(size.x,size.y,size.z);
     const float v[8][3]={{-.5f,-.5f,-.5f},{.5f,-.5f,-.5f},{.5f,.5f,-.5f},{-.5f,.5f,-.5f},{-.5f,-.5f,.5f},{.5f,-.5f,.5f},{.5f,.5f,.5f},{-.5f,.5f,.5f}};
     const int faces[6][4]={{0,1,2,3},{4,7,6,5},{0,4,5,1},{3,2,6,7},{1,5,6,2},{0,3,7,4}};
-    glBegin(GL_QUADS); for(const auto& face:faces) { glTexCoord2f(0,0);glVertex3fv(v[face[0]]);glTexCoord2f(1,0);glVertex3fv(v[face[1]]);glTexCoord2f(1,1);glVertex3fv(v[face[2]]);glTexCoord2f(0,1);glVertex3fv(v[face[3]]); } glEnd();
+    const float uv[6][4] = {
+        {size.x, size.y, 0, 0}, {size.x, size.y, 0, 0},
+        {size.z, size.y, 0, 0}, {size.z, size.y, 0, 0},
+        {size.x, size.z, 0, 0}, {size.x, size.z, 0, 0}
+    };
+    glBegin(GL_QUADS);
+    for (int f = 0; f < 6; ++f) {
+        const float u = uv[f][0], w = uv[f][1];
+        glTexCoord2f(0, 0); glVertex3fv(v[faces[f][0]]);
+        glTexCoord2f(u, 0); glVertex3fv(v[faces[f][1]]);
+        glTexCoord2f(u, w); glVertex3fv(v[faces[f][2]]);
+        glTexCoord2f(0, w); glVertex3fv(v[faces[f][3]]);
+    }
+    glEnd();
     glPopMatrix(); glBindTexture(GL_TEXTURE_2D,0); glDisable(GL_TEXTURE_2D);
 }
 void plane(Vec3 center, Vec3 size, Color color) { box(center, {size.x, .02f, size.z}, color); }

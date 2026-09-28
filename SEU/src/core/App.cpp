@@ -2,6 +2,7 @@
 #include "Config.h"
 #include "../render/Primitives.h"
 #include "../render/TextureManager.h"
+#include "../world/Furniture.h"
 #include <GL/glut.h>
 #include <algorithm>
 #include <cstdlib>
@@ -73,7 +74,9 @@ int App::run(int argc, char** argv) {
 
 void App::update(float dt) {
     if (games_.active()) { games_.update(input_); input_.endFrame(); return; }
+    if (chat_.active()) { chat_.update(dt); input_.endFrame(); return; }
     rotationAngle_ += 55.0f * dt;
+    syncLiftWorld();
 
     if (elevatorNotifyTimer_ > 0.0f) {
         elevatorNotifyTimer_ = std::max(0.0f, elevatorNotifyTimer_ - dt);
@@ -95,14 +98,12 @@ void App::update(float dt) {
         dronePos_ = {0.0f, 18.0f, -14.0f};
         droneYaw_ = 90.0f;
         dronePitch_ = -16.0f;
-    }
-
-    // Elevator floor transformation buttons: 1, 2, 3, 4
-    if (!demo_) {
-        if (input_.pressed('1')) handleElevator(1);
-        else if (input_.pressed('2')) handleElevator(2);
-        else if (input_.pressed('3')) handleElevator(3);
-        else if (input_.pressed('4')) handleElevator(4);
+        liftPhase_ = LiftPhase::Idle;
+        liftFloorPosition_ = 4.0f;
+        liftDoorAmount_ = 0.0f;
+        liftTargetFloor_ = 4;
+        liftPhaseTimer_ = 0.0f;
+        liftRiding_ = false;
     }
 
     if (input_.pressed('m')) {
@@ -125,9 +126,10 @@ void App::update(float dt) {
         // DRONE MODE: Interactive Flight Controller & Playable Chase Drone
         if (droneChase_) {
             // Playable 3rd-Person Chase Drone: user moves player character
-            player_.update(input_, dt, collisionWorld_);
-            interaction_.update(input_, player_);
+            if (!liftRiding_ || liftPhase_ == LiftPhase::Open) player_.update(input_, dt, collisionWorld_);
+            interaction_.update(input_, player_, dt);
             if (interaction_.gameRequested()) { games_.enter(interaction_.requestedGame()); interaction_.clearGameRequest(); }
+            if (interaction_.chatRequested()) { chat_.open(); interaction_.clearChatRequest(); }
 
             // Chase camera orbit controls
             if (input_.specialHeld(GLUT_KEY_LEFT)) chaseYaw_ -= 65.0f * dt;
@@ -174,10 +176,13 @@ void App::update(float dt) {
         }
     } else {
         // Standard First-Person Mode
-        player_.update(input_, dt, collisionWorld_);
+        if (!liftRiding_ || liftPhase_ == LiftPhase::Open) player_.update(input_, dt, collisionWorld_);
         interaction_.update(input_, player_, dt);
         if (interaction_.gameRequested()) { games_.enter(interaction_.requestedGame()); interaction_.clearGameRequest(); }
+        if (interaction_.chatRequested()) { chat_.open(); interaction_.clearChatRequest(); }
     }
+    updateLift(dt);
+    syncLiftWorld();
     input_.endFrame();
 }
 
@@ -332,6 +337,7 @@ void App::display() {
     glScalef(-1, 1, 1);
 
     campus::renderScene(labels_, debug_, !topDown_);
+    if (chat_.active()) chat_.renderWorld();
 
     // Render 3D player avatar when viewing from drone or external camera
     if (panorama_ || facadeView_ || topDown_) {
@@ -380,12 +386,19 @@ void App::display() {
             player_.stateName(),
             nightMode_ ? "NIGHT [CAMPUS LIGHTS ON]" : "DAY [SUNLIGHT]");
         render::text2d(16, 52, statusText, nightMode_ ? render::Color{.35f, .85f, 1.0f} : render::Color{1, .85f, .25f});
+    } else if (!demo_) {
+        render::text2d(16, 28, "WASD move | C crouch | Shift/R run | Space jump | E interact | 1-4 lift | M mouse | O drone | V top-down", {1, 1, 1});
     }
 
     int hudY = 76;
     const bool nearLift = inLiftArea(player_.position);
     if (!demo_ && nearLift) {
-        render::text2d(16, hudY, "[ELEVATOR LIFT] Press 1: Floor 1 (Ground) | 2: Floor 2 (Library) | 3: Floor 3 (Auditorium) | 4: Floor 4 (Sky Terrace)", {.20f, .96f, .45f});
+        const char* liftHelp = inLiftCabin(player_.position) && liftPhase_ == LiftPhase::Open
+            ? "[LIFT CAR] Doors open | Press 1/2/3/4 to select destination"
+            : (liftPhase_ == LiftPhase::Open
+                ? "[LIFT] Doors open | Walk inside, then press 1/2/3/4"
+                : "[LIFT HALL] Press E to call the lift | Please wait for doors");
+        render::text2d(16, hudY, liftHelp, {.20f, .96f, .45f});
         hudY += 24;
     }
     if (elevatorNotifyTimer_ > 0.0f && !elevatorNotification_.empty()) {
@@ -448,9 +461,17 @@ void App::timerCallback(int) {
     glutPostRedisplay();
     glutTimerFunc(16, timerCallback, 0);
 }
-void App::keyDownCallback(unsigned char k, int, int) { instance().input_.keyDown(k); }
+void App::keyDownCallback(unsigned char k, int, int) {
+    App& app = instance();
+    if (app.chat_.active()) { app.chat_.handleKey(k); return; }
+    app.input_.keyDown(k);
+}
 void App::keyUpCallback(unsigned char k, int, int) { instance().input_.keyUp(k); }
-void App::specialDownCallback(int k, int, int) { instance().input_.specialDown(k); }
+void App::specialDownCallback(int k, int, int) {
+    App& app = instance();
+    if (app.chat_.active()) { app.chat_.handleSpecialKey(k); return; }
+    app.input_.specialDown(k);
+}
 void App::specialUpCallback(int k, int, int) { instance().input_.specialUp(k); }
 void App::mouseCallback(int button, int state, int, int) {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && !instance().mouseCaptured_) {
@@ -468,49 +489,120 @@ bool App::inLiftArea(const Vec3& pos) const {
     return inWestLift || inEastLift;
 }
 
+bool App::inLiftCabin(const Vec3& pos) const {
+    // Cabin bounds match the two boardable lift interiors. The surrounding
+    // lobby is intentionally excluded so floor selection cannot become a
+    // free teleport anywhere near the lift core.
+    const bool westCabin = pos.x >= -18.15f && pos.x <= -12.45f &&
+                           pos.z >= 25.15f && pos.z <= 26.65f;
+    const bool eastCabin = pos.x >= 5.65f && pos.x <= 11.65f &&
+                           pos.z >= 25.35f && pos.z <= 26.85f;
+    return westCabin || eastCabin;
+}
+
+float App::floorY(int floor) const {
+    return 1.2f + static_cast<float>(std::max(1, std::min(4, floor)) - 1) * 4.0f;
+}
+
+int App::floorAtPlayer() const {
+    if (player_.position.y >= 11.2f) return 4;
+    if (player_.position.y >= 7.2f) return 3;
+    if (player_.position.y >= 3.5f) return 2;
+    return 1;
+}
+
+void App::syncLiftWorld() {
+    const int carFloor = std::max(1, std::min(4, static_cast<int>(liftFloorPosition_ + .5f)));
+    collisionWorld_.setLiftState(carFloor, liftPhase_ == LiftPhase::Open && liftDoorAmount_ > .98f);
+    campus::setLiftPresentation(liftFloorPosition_, liftDoorAmount_);
+}
+
 void App::handleElevator(int floor) {
     if (floor < 1 || floor > 4) return;
 
-    float targetY = 1.2f;
-    const char* floorTitle = "FLOOR 1: GROUND LOBBY & GAMING SUITE";
-    if (floor == 1) {
-        targetY = 1.2f;
-        floorTitle = "FLOOR 1: GROUND LOBBY & GAMING SUITE";
-    } else if (floor == 2) {
-        targetY = 5.2f;
-        floorTitle = "FLOOR 2: ACADEMIC LIBRARY & FACULTY SUITES";
-    } else if (floor == 3) {
-        targetY = 9.2f;
-        floorTitle = "FLOOR 3: GRAND AUDITORIUM & INNOVATION LAB";
-    } else if (floor == 4) {
-        targetY = 13.2f;
-        floorTitle = "FLOOR 4: EXECUTIVE BOARDROOM & SKY TERRACE";
+    if (liftPhase_ != LiftPhase::Open || !inLiftCabin(player_.position)) {
+        elevatorNotification_ = "[LIFT] Enter the open cabin before selecting a floor";
+        elevatorNotifyTimer_ = 3.0f;
+        return;
     }
 
-    const bool nearWest = std::abs(player_.position.x - (-15.35f)) <= std::abs(player_.position.x - 8.6f);
-    float targetX = nearWest ? -15.35f : 8.6f;
-    float targetZ = nearWest ? 24.0f : 24.2f;
+    liftTargetFloor_ = floor;
+    liftRiding_ = true;
+    liftPhaseTimer_ = 0.0f;
+    if (liftTargetFloor_ == static_cast<int>(liftFloorPosition_ + .5f)) {
+        liftPhase_ = LiftPhase::Closing;
+    } else {
+        liftPhase_ = LiftPhase::Closing;
+    }
+    elevatorNotification_ = std::string("[LIFT] Doors closing - travelling to Floor ") + std::to_string(floor);
+    elevatorNotifyTimer_ = 3.0f;
+}
 
-    // If player is already within a lift area, preserve their relative X & Z coordinates inside the cabin
-    if (inLiftArea(player_.position)) {
-        targetX = player_.position.x;
-        targetZ = player_.position.z;
+void App::updateLift(float dt) {
+    const float doorSpeed = 1.35f;
+    const int currentFloor = std::max(1, std::min(4, static_cast<int>(liftFloorPosition_ + .5f)));
+
+    // Hall call: E at a landing brings the initially parked car down/up.
+    if (liftPhase_ == LiftPhase::Idle && input_.pressed('e') && inLiftArea(player_.position) && !inLiftCabin(player_.position)) {
+        liftTargetFloor_ = floorAtPlayer();
+        liftPhaseTimer_ = 0.0f;
+        if (currentFloor == liftTargetFloor_) liftPhase_ = LiftPhase::Opening;
+        else liftPhase_ = LiftPhase::Traveling;
+        elevatorNotification_ = currentFloor == liftTargetFloor_
+            ? "[LIFT] Hall call accepted - doors opening"
+            : "[LIFT] Hall call accepted - car travelling to your floor";
+        elevatorNotifyTimer_ = 4.0f;
     }
 
-    player_.position = {targetX, targetY, targetZ};
-    player_.verticalVelocity = 0.0f;
-    player_.grounded = true;
-    player_.seated = false;
-    player_.yaw = 270.0f; // Face outward into the floor lobby (-Z direction)
-    player_.pitch = 0.0f;
-
-    // In free drone flight, move drone to view destination floor
-    if (panorama_ && !droneChase_) {
-        dronePos_ = {targetX, targetY + 3.0f, targetZ - 7.0f};
-        droneYaw_ = 90.0f;
-        dronePitch_ = -10.0f;
+    switch (liftPhase_) {
+        case LiftPhase::Idle:
+            break;
+        case LiftPhase::Opening:
+            liftDoorAmount_ = std::min(1.0f, liftDoorAmount_ + doorSpeed * dt);
+            if (liftDoorAmount_ >= 1.0f) {
+                liftPhase_ = LiftPhase::Open;
+                liftPhaseTimer_ = 0.0f;
+                elevatorNotification_ = "[LIFT] Doors open - enter cabin, then press 1/2/3/4";
+                elevatorNotifyTimer_ = 4.0f;
+            }
+            break;
+        case LiftPhase::Open:
+            liftPhaseTimer_ += dt;
+            if (inLiftCabin(player_.position)) liftRiding_ = true;
+            if (inLiftCabin(player_.position)) {
+                if (input_.pressed('1')) handleElevator(1);
+                else if (input_.pressed('2')) handleElevator(2);
+                else if (input_.pressed('3')) handleElevator(3);
+                else if (input_.pressed('4')) handleElevator(4);
+            }
+            // Keep the door open while someone is inside; empty cabins close
+            // after a realistic dwell interval.
+            if (!inLiftCabin(player_.position) && liftPhaseTimer_ > 6.0f) liftPhase_ = LiftPhase::Closing;
+            break;
+        case LiftPhase::Closing:
+            liftDoorAmount_ = std::max(0.0f, liftDoorAmount_ - doorSpeed * dt);
+            if (liftDoorAmount_ <= 0.0f) {
+                liftPhaseTimer_ = 0.0f;
+                if (liftTargetFloor_ == static_cast<int>(liftFloorPosition_ + .5f)) liftPhase_ = LiftPhase::Opening;
+                else liftPhase_ = LiftPhase::Traveling;
+            }
+            break;
+        case LiftPhase::Traveling: {
+            const float direction = liftTargetFloor_ > liftFloorPosition_ ? 1.0f : -1.0f;
+            liftFloorPosition_ += direction * dt / 1.6f;
+            const bool arrived = direction > 0 ? liftFloorPosition_ >= liftTargetFloor_ : liftFloorPosition_ <= liftTargetFloor_;
+            if (arrived) {
+                liftFloorPosition_ = static_cast<float>(liftTargetFloor_);
+                liftPhase_ = LiftPhase::Opening;
+                elevatorNotification_ = std::string("[LIFT] Arrived at Floor ") + std::to_string(liftTargetFloor_);
+                elevatorNotifyTimer_ = 3.5f;
+            }
+            if (liftRiding_) {
+                player_.position.y = 1.2f + (liftFloorPosition_ - 1.0f) * 4.0f;
+                player_.verticalVelocity = 0.0f;
+                player_.grounded = true;
+            }
+            break;
+        }
     }
-
-    elevatorNotification_ = std::string("[LIFT ARRIVAL] TRANSFORMED TO ") + floorTitle;
-    elevatorNotifyTimer_ = 4.5f;
 }

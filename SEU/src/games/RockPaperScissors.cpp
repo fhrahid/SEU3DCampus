@@ -2,12 +2,15 @@
 #include "../core/Input.h"
 #include "../render/Primitives.h"
 #include <cstdio>
-#include <cstdlib>
+#include <random>
+namespace { std::mt19937 rng(std::random_device{}()); }
 void RockPaperScissors::reset() { player_=cpu_=result_=playerScore_=cpuScore_=0; }
 void RockPaperScissors::update(const Input& input) {
     if (input.pressed('n')) { reset(); return; }
     for (int i=1;i<=3;++i) if (input.pressed(static_cast<unsigned char>('0'+i))) {
-        player_=i; cpu_=1+std::rand()%3;
+        player_=i;
+        std::uniform_int_distribution<int> hand(1, 3);
+        cpu_=hand(rng);
         result_=(player_==cpu_)?0:((player_-cpu_+3)%3==1?1:-1);
         if (result_==1) ++playerScore_; else if (result_==-1) ++cpuScore_;
     }

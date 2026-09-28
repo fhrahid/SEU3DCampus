@@ -2,8 +2,9 @@
 #include "../core/Input.h"
 #include "../render/Primitives.h"
 #include <GL/glut.h>
-#include <cstdlib>
 #include <cstdio>
+#include <random>
+namespace { std::mt19937 rng(std::random_device{}()); }
 void RubiksCube::reset() { for(int f=0;f<6;++f)for(int i=0;i<9;++i)face_[f][i]=f; moves_=0; }
 void RubiksCube::turn(int face, bool inverse) {
     const auto rotFace = [this](int f) {
@@ -39,7 +40,12 @@ void RubiksCube::turn(int face, bool inverse) {
 bool RubiksCube::solved() const { for(int f=0;f<6;++f)for(int i=0;i<9;++i)if(face_[f][i]!=f)return false; return true; }
 void RubiksCube::update(const Input& input) {
     if(input.pressed('n')){reset();return;}
-    if(input.pressed('x')){ for(int i=0;i<12;++i) turn(std::rand()%6,std::rand()%2); return; }
+    if(input.pressed('x')){
+        std::uniform_int_distribution<int> face(0, 5);
+        std::uniform_int_distribution<int> direction(0, 1);
+        for(int i=0;i<12;++i) turn(face(rng), direction(rng));
+        return;
+    }
     const bool inverse=input.held('i');
     const char keys[]={'u','d','l','r','f','b'};
     for(int f=0;f<6;++f)if(input.pressed(static_cast<unsigned char>(keys[f])))turn(f,inverse);

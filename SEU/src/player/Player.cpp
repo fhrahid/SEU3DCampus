@@ -7,6 +7,16 @@
 namespace { constexpr float pi = 3.1415926535f; }
 
 float Player::floorHeight(float x, float y, float z) const {
+    // Stair 2 must be evaluated before the solid upper-floor slabs. Otherwise
+    // the slab test wins on Floors 3/4 and the player snaps/falls through the
+    // visible steps.
+    if (x >= 5.6f && x <= 8.0f && z >= 28.2f && z <= 32.2f) {
+        const float t = std::max(0.0f, std::min(1.0f, (z - 28.2f) / 4.0f));
+        if (y >= 7.0f && y < 11.2f) return 9.2f + t * 4.0f;
+        if (y >= 3.0f && y < 7.0f) return 5.2f + t * 4.0f;
+        if (y < 3.0f) return 1.2f + t * 4.0f;
+    }
+
     // 1. Floor 4: Executive Boardroom & Sky Garden Level (y >= 11.2f)
     if (y >= 11.2f) {
         if (x >= -24.0f && x <= 16.5f && z >= 9.5f && z <= 40.0f) {
@@ -31,10 +41,13 @@ float Player::floorHeight(float x, float y, float z) const {
         return 1.2f + t * 4.0f; // Climbs smoothly from 1.2f up to 5.2f
     }
 
-    // 4. Stair 2: Secondary Staircase to Second Floor (x in [9.5, 15.5], z in [26.5, 30.5])
-    if (x >= 9.5f && x <= 15.5f && z >= 26.5f && z <= 30.5f && y < 7.0f) {
-        const float t = std::max(0.0f, std::min(1.0f, (z - 26.5f) / 4.0f));
-        return 1.2f + t * 4.0f; // Climbs from 1.2f up to 5.2f
+    // 4. Stair 2: clear east stair shaft (x in [5.6, 8.0], z in [28.2, 32.2]).
+    // The same flight continues through the upper levels.
+    if (x >= 5.6f && x <= 8.0f && z >= 28.2f && z <= 32.2f) {
+        const float t = std::max(0.0f, std::min(1.0f, (z - 28.2f) / 4.0f));
+        if (y >= 7.0f && y < 11.2f) return 9.2f + t * 4.0f;
+        if (y >= 3.0f && y < 7.0f) return 5.2f + t * 4.0f;
+        if (y < 3.0f) return 1.2f + t * 4.0f;
     }
 
     // 5. Floor 2: Academic & Library Level (y >= 3.5f)
@@ -75,6 +88,7 @@ void Player::reset() {
     verticalVelocity = 0.0f;
     grounded = true;
     seated = false;
+    crouched = false;
     state = State::Idle;
 }
 
@@ -85,6 +99,7 @@ void Player::look(float dx, float dy) {
 
 void Player::update(const Input& input, float dt, const CollisionWorld& world) {
     if (seated) { state = State::Sit; return; }
+    crouched = input.held('c');
 
     Vec3 forward{std::cos(yaw * pi / 180), 0, std::sin(yaw * pi / 180)};
     // World +X is the reference plan's right side. Rendering mirrors the
@@ -100,7 +115,7 @@ void Player::update(const Input& input, float dt, const CollisionWorld& world) {
     const float length = std::sqrt(move.x * move.x + move.z * move.z);
     const bool moving = length > .001f;
     const bool running = input.held(16) || input.held('r');
-    const float speed = running ? runSpeed_ : walkSpeed_;
+    const float speed = (running ? runSpeed_ : walkSpeed_) * (crouched ? .52f : 1.0f);
 
     if (moving) {
         move = move * (1.0f / length);
@@ -135,17 +150,18 @@ void Player::update(const Input& input, float dt, const CollisionWorld& world) {
 
     const bool onStair1 = position.x >= -12.0f && position.x <= 2.8f && position.z >= 8.17f && position.z <= 9.9f && position.y < 2.0f;
     const bool onStair3 = position.x >= 1.5f && position.x <= 4.5f && position.z >= 24.4f && position.z <= 30.2f;
-    const bool onStair2 = position.x >= 9.5f && position.x <= 15.5f && position.z >= 26.5f && position.z <= 30.5f;
+    const bool onStair2 = position.x >= 5.6f && position.x <= 8.0f && position.z >= 28.2f && position.z <= 32.2f;
     const bool onStairs = onStair1 || onStair3 || onStair2;
 
     if (!grounded) state = verticalVelocity > 0 ? State::Jump : State::Fall;
+    else if (crouched) state = State::Crouch;
     else if (moving && onStairs) state = State::Stair;
     else if (moving) state = running ? State::Run : State::Walk;
     else state = State::Idle;
 }
 
 Vec3 Player::eyePosition() const {
-    const float h = seated ? 1.1f : eyeHeight_;  // Lower view when seated
+    const float h = seated ? 1.1f : (crouched ? .98f : eyeHeight_);
     return {position.x, position.y + h, position.z};
 }
 
@@ -171,6 +187,7 @@ const char* Player::stateName() const {
         case State::Fall: return "FALL";
         case State::Stair: return "STAIR CLIMB";
         case State::Sit: return "SIT";
+        case State::Crouch: return "CROUCH";
         default:
             if (fl == 4) return "FLOOR 4 [SKY TERRACE] - IDLE";
             if (fl == 3) return "FLOOR 3 [AUDITORIUM] - IDLE";

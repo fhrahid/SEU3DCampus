@@ -31,6 +31,7 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-std=c++17" />
 			<Add option="-Wall" />
 			<Add directory="C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include" />
 		</Compiler>
@@ -40,11 +41,13 @@
 			<Add library="glu32" />
 			<Add library="winmm" />
 			<Add library="gdi32" />
+			<Add library="winhttp" />
 			<Add directory="C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/lib" />
 		</Linker>
 		<Unit filename="main.cpp" />
 		<Unit filename="src/core/App.cpp" />
 		<Unit filename="src/core/Input.cpp" />
+		<Unit filename="src/chat/SEUGPTChat.cpp" />
 		<Unit filename="src/render/Camera.cpp" />
 		<Unit filename="src/render/Primitives.cpp" />
 		<Unit filename="src/render/TextureManager.cpp" />

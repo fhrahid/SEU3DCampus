@@ -7,7 +7,7 @@ class Player;
 
 class InteractionSystem {
 public:
-    enum class Kind { Chair, GameStation, Shop, Lift };
+    enum class Kind { Chair, GameStation, Shop, Lift, Chatbot };
     struct Trigger {
         Vec3 position;
         float radius;
@@ -23,6 +23,8 @@ public:
     bool gameRequested() const { return gameRequested_; }
     int requestedGame() const { return requestedGame_; }
     void clearGameRequest() { gameRequested_ = false; }
+    bool chatRequested() const { return chatRequested_; }
+    void clearChatRequest() { chatRequested_ = false; }
 
     bool hasNotification() const { return notifyTimer_ > 0.0f; }
     const char* notification() const { return notification_.c_str(); }
@@ -35,4 +37,5 @@ private:
     float sitCooldown_ = 0.0f;       // Prevents immediate re-sit after standing
     bool gameRequested_ = false;
     int requestedGame_ = -1;
+    bool chatRequested_ = false;
 };

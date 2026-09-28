@@ -4,10 +4,10 @@
 	<GL/glut.h>
 	<stdlib.h>
 
-1789700109 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\gl\glut.h
+1660762242 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\gl\glut.h
 	"freeglut_std.h"
 
-1789700109 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\gl\freeglut_std.h
+1660762242 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\gl\freeglut_std.h
 	<windows.h>
 	<EGL/egl.h>
 	<GLES/gl.h>
@@ -1052,4 +1052,210 @@
 	<initializer_list>
 	<cstring>
 	<algorithm>
+
+1790431307 source:c:\users\useras\desktop\seu3dcampus\seu\main.cpp
+	"src/core/App.h"
+
+1790457093 c:\users\useras\desktop\seu3dcampus\seu\src\core\app.h
+	"Input.h"
+	"../render/Camera.h"
+	"../world/CampusLayout.h"
+	"../player/Player.h"
+	"../physics/CollisionWorld.h"
+	"../interaction/InteractionSystem.h"
+	"../games/GameManager.h"
+	"../chat/SEUGPTChat.h"
+
+1790412988 c:\users\useras\desktop\seu3dcampus\seu\src\core\input.h
+	<array>
+
+1790405279 c:\users\useras\desktop\seu3dcampus\seu\src\render\camera.h
+
+1790428892 c:\users\useras\desktop\seu3dcampus\seu\src\world\campuslayout.h
+	"../render/Camera.h"
+
+1790458573 c:\users\useras\desktop\seu3dcampus\seu\src\player\player.h
+	"../render/Camera.h"
+
+1790453146 c:\users\useras\desktop\seu3dcampus\seu\src\physics\collisionworld.h
+	"../render/Camera.h"
+	<vector>
+
+1790457076 c:\users\useras\desktop\seu3dcampus\seu\src\interaction\interactionsystem.h
+	"../render/Camera.h"
+	<string>
+
+1790423740 c:\users\useras\desktop\seu3dcampus\seu\src\games\gamemanager.h
+	"TicTacToe.h"
+	"RockPaperScissors.h"
+	"Game2048.h"
+	"RubiksCube.h"
+	"Ludo.h"
+
+1790406216 c:\users\useras\desktop\seu3dcampus\seu\src\games\tictactoe.h
+	"MiniGame.h"
+
+1790406216 c:\users\useras\desktop\seu3dcampus\seu\src\games\minigame.h
+
+1790406216 c:\users\useras\desktop\seu3dcampus\seu\src\games\rockpaperscissors.h
+	"MiniGame.h"
+
+1790406216 c:\users\useras\desktop\seu3dcampus\seu\src\games\game2048.h
+	"MiniGame.h"
+
+1790406216 c:\users\useras\desktop\seu3dcampus\seu\src\games\rubikscube.h
+	"MiniGame.h"
+
+1790416056 c:\users\useras\desktop\seu3dcampus\seu\src\games\ludo.h
+	"MiniGame.h"
+	<string>
+
+1790459006 source:c:\users\useras\desktop\seu3dcampus\seu\src\core\app.cpp
+	"App.h"
+	"Config.h"
+	"../render/Primitives.h"
+	"../render/TextureManager.h"
+	"../world/Furniture.h"
+	<GL/glut.h>
+	<algorithm>
+	<cstdlib>
+	<cstdio>
+	<cmath>
+
+1790405279 c:\users\useras\desktop\seu3dcampus\seu\src\core\config.h
+
+1790406740 c:\users\useras\desktop\seu3dcampus\seu\src\render\primitives.h
+	"Camera.h"
+
+1790452144 c:\users\useras\desktop\seu3dcampus\seu\src\render\texturemanager.h
+
+1790412988 source:c:\users\useras\desktop\seu3dcampus\seu\src\core\input.cpp
+	"Input.h"
+	<cctype>
+
+1790412988 source:c:\users\useras\desktop\seu3dcampus\seu\src\games\game2048.cpp
+	"Game2048.h"
+	"../core/Input.h"
+	"../render/Primitives.h"
+	<GL/glut.h>
+	<algorithm>
+	<cstdio>
+	<random>
+
+1790451587 source:c:\users\useras\desktop\seu3dcampus\seu\src\games\gamemanager.cpp
+	"GameManager.h"
+	"../core/Input.h"
+	"../render/Primitives.h"
+	<GL/glut.h>
+	<cstdio>
+	<algorithm>
+
+1790416081 source:c:\users\useras\desktop\seu3dcampus\seu\src\games\ludo.cpp
+	"Ludo.h"
+	"../core/Input.h"
+	"../render/Primitives.h"
+	<GL/glut.h>
+	<cstdio>
+	<random>
+	<string>
+
+1790451587 source:c:\users\useras\desktop\seu3dcampus\seu\src\games\rockpaperscissors.cpp
+	"RockPaperScissors.h"
+	"../core/Input.h"
+	"../render/Primitives.h"
+	<cstdio>
+	<random>
+
+1790451587 source:c:\users\useras\desktop\seu3dcampus\seu\src\games\rubikscube.cpp
+	"RubiksCube.h"
+	"../core/Input.h"
+	"../render/Primitives.h"
+	<GL/glut.h>
+	<cstdio>
+	<random>
+
+1790416282 source:c:\users\useras\desktop\seu3dcampus\seu\src\games\tictactoe.cpp
+	"TicTacToe.h"
+	"../core/Input.h"
+	"../render/Primitives.h"
+	<GL/glut.h>
+	<cstdio>
+
+1790457076 source:c:\users\useras\desktop\seu3dcampus\seu\src\interaction\interactionsystem.cpp
+	"InteractionSystem.h"
+	"../core/Input.h"
+	"../player/Player.h"
+	<cmath>
+
+1790453171 source:c:\users\useras\desktop\seu3dcampus\seu\src\physics\collisionworld.cpp
+	"CollisionWorld.h"
+	"../render/Primitives.h"
+	<GL/gl.h>
+	<algorithm>
+
+1790458573 source:c:\users\useras\desktop\seu3dcampus\seu\src\player\player.cpp
+	"Player.h"
+	"../core/Input.h"
+	"../physics/CollisionWorld.h"
+	<algorithm>
+	<cmath>
+
+1790405279 source:c:\users\useras\desktop\seu3dcampus\seu\src\render\camera.cpp
+	"Camera.h"
+	<GL/glu.h>
+	<algorithm>
+	<cmath>
+
+1790452579 source:c:\users\useras\desktop\seu3dcampus\seu\src\render\primitives.cpp
+	"Primitives.h"
+	<GL/glut.h>
+	"TextureManager.h"
+
+1790452592 source:c:\users\useras\desktop\seu3dcampus\seu\src\render\texturemanager.cpp
+	"TextureManager.h"
+	<GL/glut.h>
+
+1790453590 source:c:\users\useras\desktop\seu3dcampus\seu\src\world\campuslayout.cpp
+	"CampusLayout.h"
+	"../render/Primitives.h"
+	"Furniture.h"
+	<GL/glut.h>
+	<initializer_list>
+	<cstring>
+	<algorithm>
+
+1790453190 c:\users\useras\desktop\seu3dcampus\seu\src\world\furniture.h
+
+1790458836 source:c:\users\useras\desktop\seu3dcampus\seu\src\world\furniture.cpp
+	"Furniture.h"
+	"../render/Primitives.h"
+	<GL/glut.h>
+	<initializer_list>
+	<cstdio>
+	<cmath>
+	<algorithm>
+
+1790459006 c:\users\useras\desktop\seu3dcampus\seu\src\chat\seugptchat.h
+	"../render/Primitives.h"
+	<string>
+	<thread>
+	<mutex>
+	<vector>
+
+1790459416 source:c:\users\useras\desktop\seu3dcampus\seu\src\chat\seugptchat.cpp
+	"SEUGPTChat.h"
+	"../render/Primitives.h"
+	<GL/glut.h>
+	<windows.h>
+	<winhttp.h>
+	<algorithm>
+	<cstdlib>
+	<fstream>
+	<sstream>
+	<vector>
+
+1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\winhttp.h
+	<pshpack8.h>
+	<pshpack4.h>
+	<poppack.h>
 

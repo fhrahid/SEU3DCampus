@@ -10,6 +10,7 @@ const InteractionSystem::Trigger triggers[] = {
     {{-17.1f, 1.2f, 11.8f}, 2.2f, InteractionSystem::Kind::Chair, "Admission officer desk", -1, nullptr, 180.0f},
     {{-20.7f, 1.2f, 11.2f}, 2.5f, InteractionSystem::Kind::Chair, "Guardian waiting chair", -1, nullptr, 90.0f},
     {{-7.0f,  1.2f, 34.0f}, 2.5f, InteractionSystem::Kind::Chair, "Cafeteria lounge table", -1, nullptr, 270.0f},
+    {{-22.35f, 1.2f, 19.8f}, 1.8f, InteractionSystem::Kind::Chatbot, "SEUGPT computer terminal", -1, nullptr},
 
     // Ground Floor: Food Shops 1 to 5 (Around Cafeteria)
     {{-20.8f, 1.2f, 38.3f}, 2.4f, InteractionSystem::Kind::Shop, "Food Shop 1: SEU Deli & Burgers", -1,
@@ -124,7 +125,9 @@ void InteractionSystem::update(const Input& input, Player& player, float dt) {
     } else if (current_->kind == Kind::Shop) {
         prompt_ = "E: order/buy from " + std::string(current_->name);
     } else if (current_->kind == Kind::Lift) {
-        prompt_ = "E / 1-4: ride " + std::string(current_->name);
+        prompt_ = "E: call/open " + std::string(current_->name);
+    } else if (current_->kind == Kind::Chatbot) {
+        prompt_ = "E: use " + std::string(current_->name);
     }
 
     if (input.pressed('e')) {
@@ -149,6 +152,8 @@ void InteractionSystem::update(const Input& input, Player& player, float dt) {
                 notification_ = std::string("Interacted with ") + current_->name;
             }
             notifyTimer_ = 4.5f;
+        } else if (current_->kind == Kind::Chatbot) {
+            chatRequested_ = true;
         }
     }
 }

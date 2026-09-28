@@ -4,6 +4,7 @@
 #include <initializer_list>
 #include <cstdio>
 #include <cmath>
+#include <algorithm>
 
 namespace campus {
 namespace {
@@ -15,6 +16,142 @@ const Color legSteel{.22f, .24f, .26f};
 const Color chromeColor{.86f, .88f, .92f};
 const Color cushionColor{.38f, .22f, .12f};
 const Color sofaLeather{.32f, .16f, .10f};
+float liftPresentationFloor = 4.0f;
+float liftPresentationDoor = 0.0f;
+
+enum class NpcActivity { Desk, Read, Teach, Serve, Eat, Game, Lab, Present, Talk, Cashier };
+
+// Wall-mounted split AC unit. The front grille is deliberately visible from
+// the room so every enclosed room reads as conditioned indoor space.
+void airConditioner(float x, float y, float z, bool onXWall = true) {
+    const Color casing{.86f, .88f, .90f};
+    const Color vent{.18f, .22f, .26f};
+    glPushMatrix();
+    glTranslatef(x, y + 3.18f, z);
+    if (onXWall) glRotatef(90.0f, 0, 1, 0);
+    render::box({0, 0, 0}, {1.35f, .34f, .20f}, casing);
+    render::box({0, -.02f, -.115f}, {1.05f, .16f, .025f}, vent);
+    for (float gx = -.42f; gx <= .42f; gx += .14f)
+        render::box({gx, -.02f, -.135f}, {.025f, .10f, .012f}, {.58f, .65f, .70f});
+    render::box({.53f, .06f, -.14f}, {.08f, .035f, .018f}, {.15f, .85f, .38f});
+    glPopMatrix();
+}
+
+void npc(float x, float y, float z, float yaw, NpcActivity activity, Color shirt) {
+    const Color skin{.82f, .61f, .45f};
+    const Color trousers{.16f, .19f, .24f};
+    const Color hair{.08f, .055f, .04f};
+    // Use the world position as a stable seed so every NPC has a different
+    // rhythm, even when two characters share the same activity.
+    const float seconds = static_cast<float>(glutGet(GLUT_ELAPSED_TIME)) * .001f;
+    const float seed = std::fabs(x * 1.37f + y * .73f + z * 2.11f);
+    const float cycle = seconds * (.72f + std::fmod(seed, .58f)) + seed;
+    const float motion = std::sin(cycle);
+    const float alternate = std::sin(cycle * 1.71f + 1.2f);
+    const float pulse = .5f + .5f * motion;
+    const float bob = .008f * std::sin(cycle * .63f);
+
+    glPushMatrix();
+    glTranslatef(x, y + bob, z);
+    glRotatef(yaw, 0, 1, 0);
+
+    // Compact low-poly person: legs and torso have a small idle shift so the
+    // scene never feels like it contains frozen mannequins.
+    render::box({-.13f + .012f * alternate, .38f, 0}, {.18f, .70f, .20f}, trousers);
+    render::box({ .13f - .012f * alternate, .38f, 0}, {.18f, .70f, .20f}, trousers);
+    render::box({0, 1.08f, 0}, {.46f, .68f, .28f}, shirt);
+
+    // The head follows the current task: readers look down, presenters look
+    // toward the room, and conversational NPCs subtly look side to side.
+    float headTilt = -2.0f * motion;
+    if (activity == NpcActivity::Read || activity == NpcActivity::Desk ||
+        activity == NpcActivity::Cashier || activity == NpcActivity::Lab)
+        headTilt -= 5.0f;
+    if (activity == NpcActivity::Teach || activity == NpcActivity::Present)
+        headTilt += 3.0f;
+    glPushMatrix();
+    glTranslatef(0, 1.58f, 0);
+    glRotatef(headTilt, 1, 0, 0);
+    glRotatef(2.5f * alternate, 0, 1, 0);
+    render::box({0, 0, 0}, {.27f, .28f, .27f}, skin);
+    render::box({0, .18f, 0}, {.29f, .12f, .29f}, hair);
+    glPopMatrix();
+
+    // Arms are animated around the shoulders. Different activities use this
+    // same lightweight primitive with different gestures and timing.
+    auto arm = [&](float side, float pitch, float roll, float reach) {
+        glPushMatrix();
+        glTranslatef(side * .25f, 1.31f, 0);
+        glRotatef(roll, 0, 0, 1);
+        glRotatef(pitch, 1, 0, 0);
+        render::box({0, -.20f, reach}, {.10f, .40f, .10f}, skin);
+        glPopMatrix();
+    };
+
+    if (activity == NpcActivity::Read) {
+        arm(-1, -48.0f + 9.0f * motion, -10.0f, .13f);
+        arm( 1, -48.0f - 9.0f * motion,  10.0f, .13f);
+        glPushMatrix();
+        glTranslatef(0, 1.10f + .025f * alternate, .30f);
+        glRotatef(5.0f * motion, 1, 0, 0);
+        render::box({0, 0, 0}, {.42f, .30f, .04f}, {.88f, .78f, .28f});
+        glPopMatrix();
+    } else if (activity == NpcActivity::Teach || activity == NpcActivity::Present) {
+        arm(-1, -22.0f + 12.0f * alternate, -14.0f, .08f);
+        arm(1, -36.0f + 18.0f * motion, 12.0f, .12f);
+        glPushMatrix();
+        glTranslatef(.34f, 1.15f + .03f * motion, .10f);
+        glRotatef(25.0f * alternate, 0, 1, 0);
+        render::box({0, 0, 0}, {.05f, .05f, .62f}, {.82f, .72f, .28f});
+        glPopMatrix();
+    } else if (activity == NpcActivity::Game) {
+        arm(-1, -34.0f + 7.0f * motion, -8.0f, .16f);
+        arm( 1, -34.0f - 7.0f * motion,  8.0f, .16f);
+        glPushMatrix();
+        glTranslatef(0, 1.03f + .018f * alternate, .30f);
+        glRotatef(3.0f * motion, 0, 1, 0);
+        render::box({0, 0, 0}, {.38f, .08f, .16f}, {.12f, .15f, .18f});
+        render::box({-.12f, .07f, .30f - .30f}, {.05f, .10f, .05f},
+                    pulse > .5f ? Color{.95f, .16f, .12f} : Color{.48f, .08f, .06f});
+        render::box({ .12f, .07f, .30f - .30f}, {.05f, .10f, .05f},
+                    pulse <= .5f ? Color{.16f, .42f, .95f} : Color{.08f, .22f, .55f});
+        glPopMatrix();
+    } else if (activity == NpcActivity::Lab) {
+        arm(-1, -30.0f + 18.0f * motion, -16.0f, .14f);
+        arm( 1, -48.0f - 12.0f * motion,  15.0f, .14f);
+        glPushMatrix();
+        glTranslatef(.27f + .04f * motion, 1.02f + .02f * alternate, .18f);
+        render::box({0, 0, 0}, {.22f, .18f, .16f}, {.18f, .55f, .78f});
+        render::box({0, .12f, 0}, {.12f, .02f, .08f},
+                    pulse > .45f ? Color{.2f, .95f, .45f} : Color{.06f, .34f, .16f});
+        glPopMatrix();
+    } else if (activity == NpcActivity::Serve || activity == NpcActivity::Cashier) {
+        const float reachMotion = .05f * motion;
+        arm(-1, -42.0f + 15.0f * motion, -12.0f, .18f + reachMotion);
+        arm( 1, -42.0f - 15.0f * motion,  12.0f, .18f - reachMotion);
+        glPushMatrix();
+        glTranslatef(0, 1.05f + .02f * alternate, .30f + .035f * motion);
+        render::box({0, 0, 0}, {.30f, .12f, .22f}, {.12f, .14f, .16f});
+        glPopMatrix();
+    } else if (activity == NpcActivity::Eat) {
+        const float bite = std::max(0.0f, motion);
+        arm(-1, -18.0f - 62.0f * bite, -12.0f, .12f + .12f * bite);
+        arm( 1, -18.0f - 28.0f * (1.0f - bite),  12.0f, .12f);
+        render::box({0, 1.12f + .20f * bite, .28f - .10f * bite},
+                    {.08f, .08f, .08f}, {.92f, .65f, .18f});
+    } else if (activity == NpcActivity::Talk) {
+        arm(-1, -35.0f + 28.0f * motion, -20.0f, .12f);
+        arm( 1, -35.0f - 28.0f * motion,  20.0f, .12f);
+        render::box({-.28f, 1.08f + .08f * motion, .18f}, {.08f, .08f, .08f}, skin);
+        render::box({ .28f, 1.08f - .08f * motion, .18f}, {.08f, .08f, .08f}, skin);
+    } else {
+        // Desk workers alternate between typing and checking the monitor.
+        arm(-1, -35.0f + 14.0f * motion, -12.0f, .16f);
+        arm( 1, -35.0f - 14.0f * motion,  12.0f, .16f);
+        render::box({0, 1.08f, .25f}, {.18f, .08f, .12f}, {.12f, .15f, .18f});
+    }
+    glPopMatrix();
+}
 
 // Directional chair with 4 legs, cushioned seat, and backrest oriented by yaw
 void chair(float x, float y, float z, float yawDegrees = 0.0f) {
@@ -101,6 +238,32 @@ void officeDesk(float x, float y, float z, float w = 1.9f, float d = 0.9f) {
     chair(x + w * .28f, y, z + d * .75f, 180.0f);
 }
 
+// Dedicated computer workstation for the Admission Room 2 digital assistant.
+// The screen is intentionally angled toward the visitor side so it reads as a
+// real usable terminal in first-person view rather than a floating monitor.
+void seuGptDesk(float x, float y, float z) {
+    render::texturedBox({x, y + .80f, z}, {1.65f, .08f, .82f}, woodTop, 2);
+    render::box({x - .64f, y + .38f, z}, {.10f, .76f, .68f}, woodDark);
+    render::box({x + .64f, y + .38f, z}, {.10f, .76f, .68f}, woodDark);
+
+    // Monitor housing, luminous screen, and center stand.
+    render::box({x, y + 1.22f, z + .14f}, {1.38f, .70f, .06f}, {.07f, .09f, .12f});
+    render::box({x, y + 1.22f, z + .175f}, {1.20f, .56f, .018f}, {.035f, .12f, .16f});
+    render::box({x, y + .98f, z + .12f}, {.12f, .18f, .08f}, legSteel);
+    render::box({x, y + .90f, z + .12f}, {.42f, .025f, .22f}, legSteel);
+
+    // Keyboard, mouse, and a small green status lamp.
+    render::box({x, y + .89f, z + .18f}, {.52f, .025f, .20f}, {.18f, .20f, .23f});
+    render::box({x + .35f, y + .90f, z + .18f}, {.08f, .035f, .11f}, {.82f, .84f, .88f});
+    render::box({x + .52f, y + 1.22f, z + .21f}, {.08f, .035f, .018f}, {.20f, .95f, .45f});
+    // The scene is mirrored at the view boundary, so raster text begins from
+    // the +X side to appear on the visual left side of the monitor.
+    render::text3d({x + .24f, y + 1.24f, z + .21f}, "SEUGPT", {.25f, .95f, .55f});
+
+    // Visitor-side chair faces the workstation and leaves a clear approach.
+    chair(x, y, z + .76f, 180.0f);
+}
+
 // Long service/teller counter with transaction window and chair
 void serviceCounter(float x, float y, float z, float w = 2.8f) {
     render::box({x, y + .60f, z}, {w, 1.20f, .65f}, {.36f, .22f, .14f});
@@ -150,7 +313,7 @@ void bookshelf(float x, float y, float z, int shelves = 5) {
 
 
 // Authentic Architectural Elevator Portal & Illuminated 3D Cabin
-void lift(float x, float y, float z, int floorNum = 1, bool doorsOpen = false) {
+void lift(float x, float y, float z, int floorNum = 1, float doorOpenAmount = 0.0f, bool carPresent = true, bool drawPortal = true) {
     const Color chromeCol{.85f, .88f, .92f};
     const Color steelDark{.22f, .24f, .27f};
     const Color steelBrushed{.72f, .75f, .80f};
@@ -160,6 +323,7 @@ void lift(float x, float y, float z, int floorNum = 1, bool doorsOpen = false) {
     // =========================================================================
     // 1. ELEVATOR SHAFT & INTERIOR 3D CABIN (Extends 1.7m deep into +Z)
     // =========================================================================
+    if (carPresent) {
     // Cabin Floor (Dark polished granite tile)
     render::box({x, y + .02f, z + .85f}, {2.24f, .04f, 1.70f}, {.15f, .16f, .18f});
 
@@ -199,19 +363,22 @@ void lift(float x, float y, float z, int floorNum = 1, bool doorsOpen = false) {
     render::box({copX - .015f, y + 2.15f, z + .55f}, {.01f, .12f, .22f}, {.08f, .10f, .14f});
     char inFlText[16]; std::snprintf(inFlText, sizeof(inFlText), "FL %d", floorNum);
     render::text3d({copX - .025f, y + 2.12f, z + .50f}, inFlText, {.15f, .95f, .40f});
+    }
 
     // =========================================================================
     // 2. EXTERIOR ELEVATOR PORTAL, ARCHITRAVE & SILL
     // =========================================================================
     // Outer Stainless Steel Portal Architrave
-    render::box({x - 1.18f, y + 1.65f, z}, {.18f, 3.30f, .24f}, steelBrushed); // Left jamb
-    render::box({x + 1.18f, y + 1.65f, z}, {.18f, 3.30f, .24f}, steelBrushed); // Right jamb
-    render::box({x, y + 3.15f, z}, {2.54f, .30f, .24f}, steelBrushed);         // Header lintel
-    render::box({x, y + .02f, z - .08f}, {2.36f, .04f, .22f}, {.42f, .45f, .48f}); // Grooved sill plate
+    if (drawPortal) {
+        render::box({x - 1.18f, y + 1.65f, z}, {.18f, 3.30f, .24f}, steelBrushed); // Left jamb
+        render::box({x + 1.18f, y + 1.65f, z}, {.18f, 3.30f, .24f}, steelBrushed); // Right jamb
+        render::box({x, y + 3.15f, z}, {2.54f, .30f, .24f}, steelBrushed);         // Header lintel
+        render::box({x, y + .02f, z - .08f}, {2.36f, .04f, .22f}, {.42f, .45f, .48f}); // Grooved sill plate
 
     // Lintel Brand Plate ("OTIS / SCHINDLER 1600kg 21P")
-    render::box({x, y + 3.08f, z - .122f}, {.72f, .08f, .01f}, {.15f, .17f, .20f});
-    render::text3d({x - .32f, y + 3.05f, z - .135f}, "SEU LIFT - 1600kg", {.85f, .90f, .98f});
+        render::box({x, y + 3.08f, z - .122f}, {.72f, .08f, .01f}, {.15f, .17f, .20f});
+        render::text3d({x - .32f, y + 3.05f, z - .135f}, "SEU LIFT - 1600kg", {.85f, .90f, .98f});
+    }
 
     // =========================================================================
     // 3. DUAL TELESCOPING SLIDING DOORS (OPEN OR CLOSED WITH OBSERVATION PANELS)
@@ -220,14 +387,15 @@ void lift(float x, float y, float z, int floorNum = 1, bool doorsOpen = false) {
     const float dy = y + .04f + dh * .5f;
     const float dz = z - .10f;
 
-    if (doorsOpen) {
-        // Doors slid fully open into the side door pockets/jambs (clear wide 1.5m entrance)
-        render::box({x - 1.10f, dy, dz}, {.36f, dh, .04f}, steelBrushed);
-        render::box({x - 1.10f, y + .22f, dz - .01f}, {.34f, .36f, .02f}, chromeCol);
-        render::box({x + 1.10f, dy, dz}, {.36f, dh, .04f}, steelBrushed);
-        render::box({x + 1.10f, y + .22f, dz - .01f}, {.34f, .36f, .02f}, chromeCol);
-        // Polished brass transition threshold sill
-        render::box({x, y + .025f, dz}, {1.84f, .03f, .16f}, {.82f, .72f, .35f});
+    if (doorOpenAmount > .01f) {
+        // Telescoping leaves slide progressively into the jamb pockets.
+        const float slide = .55f + .55f * std::min(1.0f, doorOpenAmount);
+        render::box({x - slide, dy, dz}, {.94f, dh, .04f}, steelBrushed);
+        render::box({x - slide, y + .22f, dz - .01f}, {.90f, .36f, .02f}, chromeCol);
+        render::box({x + slide, dy, dz}, {.94f, dh, .04f}, steelBrushed);
+        render::box({x + slide, y + .22f, dz - .01f}, {.90f, .36f, .02f}, chromeCol);
+        if (doorOpenAmount > .98f)
+            render::box({x, y + .025f, dz}, {1.84f, .03f, .16f}, {.82f, .72f, .35f});
     } else {
         // Closed doors with observation glass panels
         const float dw = .94f;
@@ -276,6 +444,11 @@ void lift(float x, float y, float z, int floorNum = 1, bool doorsOpen = false) {
 
 } // anonymous namespace
 
+void setLiftPresentation(float floorPosition, float doorOpenAmount) {
+    liftPresentationFloor = std::max(1.0f, std::min(4.0f, floorPosition));
+    liftPresentationDoor = std::max(0.0f, std::min(1.0f, doorOpenAmount));
+}
+
 void renderFurniture(bool labels) {
     const float gY = 1.2f;  // Ground Floor Y
     const float f2Y = 5.2f; // Second Floor Y
@@ -311,13 +484,18 @@ void renderFurniture(bool labels) {
     // University Prospectus Brochure stands
     render::box({-15.9f, gY + .92f, 11.8f}, {.18f, .16f, .28f}, {.18f, .45f, .85f});
 
-    // Executive staff chairs behind desk facing East (+X) toward entry
-    chair(-17.1f, gY, 11.35f, -90.0f);
-    chair(-17.1f, gY, 12.25f, -90.0f);
+    // Executive staff chairs behind desk facing East (+X) toward entry.
+    // chair() faces +Z at yaw 0, so +90 degrees turns it toward +X.
+    chair(-17.1f, gY, 11.35f, 90.0f);
+    chair(-17.1f, gY, 12.25f, 90.0f);
 
-    // Two visitor consultation chairs in front of desk facing West (-X) toward staff
-    chair(-15.1f, gY, 11.35f, 90.0f);
-    chair(-15.1f, gY, 12.25f, 90.0f);
+    // Two visitor consultation chairs in front of desk facing West (-X) toward staff.
+    chair(-15.1f, gY, 11.35f, -90.0f);
+    chair(-15.1f, gY, 12.25f, -90.0f);
+    airConditioner(-23.82f, gY, 12.2f, true);
+    // Keep the admission officer in the staff position behind the desk,
+    // clear of the monitor and keyboard on the visitor-facing side.
+    npc(-17.1f, gY, 11.35f, 90.0f, NpcActivity::Desk, {.18f, .38f, .72f});
 
     // Left guardian waiting area: 2 parallel rows of 4 cushioned chairs
     // Row 1 (z = 10.4m)
@@ -349,9 +527,14 @@ void renderFurniture(bool labels) {
     // =========================================================================
     officeDesk(-21.2f, gY, 16.5f, 1.9f, .85f);
     officeDesk(-18.5f, gY, 19.4f, 1.9f, .85f);
+    seuGptDesk(-22.35f, gY, 19.0f);
     sofa(-20.2f, gY, 14.6f, 2.7f, .80f, 0.0f);
     // Coffee table in front of sofa
     render::box({-20.2f, gY + .35f, 15.35f}, {1.5f, .30f, .60f}, woodTop);
+    airConditioner(-23.82f, gY, 18.4f, true);
+    // officeDesk() places its staff chair behind the desk at z - d*.75.
+    npc(-21.2f, gY, 15.86f, 0.0f, NpcActivity::Desk, {.24f, .52f, .32f});
+    npc(-18.5f, gY, 18.76f, 0.0f, NpcActivity::Talk, {.68f, .28f, .22f});
 
     // =========================================================================
     // 3. BANK 1 (Ground Floor: x in [-16.2, -11.5], z in [14.0, 21.6])
@@ -360,6 +543,9 @@ void renderFurniture(bool labels) {
     serviceCounter(-14.0f, gY, 18.5f, 2.6f);
     chair(-14.0f, gY, 17.2f, 0.0f); // Customer chair
     moneyCounter(-14.8f, gY + 1.22f, 18.5f);
+    airConditioner(-16.05f, gY, 20.5f, true);
+    // Staff position is behind the counter, beside its dedicated chair.
+    npc(-14.0f, gY, 17.65f, 0.0f, NpcActivity::Cashier, {.12f, .42f, .72f});
 
     // =========================================================================
     // 4. BANK 2 (Ground Floor: x in [7.4, 12.0], z in [17.8, 22.0])
@@ -368,6 +554,8 @@ void renderFurniture(bool labels) {
     serviceCounter(9.7f, gY, 19.8f, 2.5f);
     chair(9.7f, gY, 18.5f, 0.0f); // Customer chair
     moneyCounter(10.4f, gY + 1.22f, 19.8f);
+    airConditioner(11.82f, gY, 20.6f, true);
+    npc(9.7f, gY, 19.00f, 0.0f, NpcActivity::Cashier, {.72f, .32f, .16f});
 
     // =========================================================================
     // 5. CAFETERIA (Ground Floor: x in [-10.2, 10.2], z in [29.8, 40.0])
@@ -381,6 +569,10 @@ void renderFurniture(bool labels) {
             diningTableSet(cafX[c], gY, cafZ[r], 1.35f, 1.35f);
         }
     }
+    airConditioner(0.0f, gY, 39.65f, false);
+    npc(-4.0f, gY, 36.10f, 180.0f, NpcActivity::Eat, {.20f, .48f, .78f});
+    npc(4.0f, gY, 39.30f, 180.0f, NpcActivity::Talk, {.78f, .28f, .18f});
+    npc(0.0f, gY, 31.10f, 0.0f, NpcActivity::Eat, {.24f, .68f, .38f});
 
     // =========================================================================
     // 6. FACULTY LOUNGE (Ground Floor: x in [-24, -9.8], z in [28.2, 33.6])
@@ -391,6 +583,9 @@ void renderFurniture(bool labels) {
     roundTableSet(-12.6f, gY, 29.8f, 0.75f);
     roundTableSet(-18.9f, gY, 32.2f, 0.75f);
     roundTableSet(-14.7f, gY, 32.2f, 0.75f);
+    airConditioner(-10.05f, gY, 30.8f, true);
+    npc(-18.9f, gY, 33.35f, 180.0f, NpcActivity::Talk, {.48f, .26f, .18f});
+    npc(-14.7f, gY, 31.05f, 0.0f, NpcActivity::Talk, {.18f, .34f, .62f});
 
     // =========================================================================
     // 7. FOOD SHOPS 1-5 (FULLY STOCKED SERVICE COUNTERS, FOOD WARMERS & DRINKS)
@@ -431,6 +626,8 @@ void renderFurniture(bool labels) {
 
     // Overhead Menu Board
     render::text3d({-21.0f, gY + 2.45f, 37.0f}, "BURGER $4.00 | CHICKEN $4.50 | FRIES $2.00", {1, 1, 1});
+    airConditioner(-23.82f, gY, 38.3f, true);
+    npc(-22.85f, gY, 38.3f, 90.0f, NpcActivity::Serve, {.72f, .20f, .12f});
 
     // Commercial Upright Beverage Cooler on Back Wall
     render::box({-23.5f, gY + 1.05f, 38.8f}, {.55f, 2.10f, .95f}, {.18f, .20f, .24f});
@@ -466,6 +663,8 @@ void renderFurniture(bool labels) {
 
     // Overhead Menu Board
     render::text3d({-21.0f, gY + 2.45f, 34.0f}, "PIZZA SLICE $3 | SPICY ROLL $2.50 | SAMOSA $2", {1, 1, 1});
+    airConditioner(-23.82f, gY, 35.0f, true);
+    npc(-22.85f, gY, 35.1f, 90.0f, NpcActivity::Serve, {.82f, .25f, .12f});
 
     // Microwave & Pizza Box Stack
     render::box({-23.5f, gY + .95f, 35.6f}, {.45f, .32f, .55f}, {.75f, .78f, .82f}); // Microwave
@@ -493,6 +692,8 @@ void renderFurniture(bool labels) {
 
     // Overhead Menu Board
     render::text3d({14.2f, gY + 2.45f, 36.3f}, "ESPRESSO $2 | CAPPUCCINO $3 | CROISSANT $2.5", {1, 1, 1});
+    airConditioner(16.35f, gY, 37.5f, true);
+    npc(15.65f, gY, 37.5f, -90.0f, NpcActivity::Serve, {.42f, .22f, .12f});
 
     // --- FOOD SHOP 4: FRESH JUICE BAR (x in [13.8, 16.6], z in [31.5, 35.0]) ---
     render::box({14.4f, gY + .55f, 33.25f}, {.65f, 1.10f, 3.2f}, {.28f, .30f, .34f});
@@ -516,6 +717,8 @@ void renderFurniture(bool labels) {
 
     // Overhead Menu Board
     render::text3d({14.2f, gY + 2.45f, 32.0f}, "MANGO JUICE $3 | SMOOTHIE $3.50 | FRUIT BOWL $3", {1, 1, 1});
+    airConditioner(16.35f, gY, 33.25f, true);
+    npc(15.65f, gY, 33.25f, -90.0f, NpcActivity::Serve, {.18f, .62f, .30f});
 
     // --- FOOD SHOP 5: ASIAN NOODLE BOWL (x in [10.2, 14.0], z in [38.0, 40.0]) ---
     render::box({12.1f, gY + .55f, 38.6f}, {3.4f, 1.10f, .65f}, {.28f, .30f, .34f});
@@ -538,6 +741,8 @@ void renderFurniture(bool labels) {
 
     // Overhead Menu Board
     render::text3d({10.6f, gY + 2.45f, 38.4f}, "FRIED RICE $3.50 | CHOWMEIN $4 | DUMPLINGS $3", {1, 1, 1});
+    airConditioner(13.8f, gY, 39.65f, false);
+    npc(12.1f, gY, 39.45f, 180.0f, NpcActivity::Serve, {.78f, .48f, .12f});
 
     // =========================================================================
     // 8. SEU UNIVERSITY STATIONERY & BOOKSTORE (x in [12.0, 16.6], z in [16.5, 22.0])
@@ -594,6 +799,9 @@ void renderFurniture(bool labels) {
     render::text3d({16.0f, gY + 2.5f, 20.6f}, "ENGINEERING", {.95f, .90f, .25f});
     render::text3d({13.2f, gY + 2.5f, 21.8f}, "REFERENCE", {.95f, .90f, .25f});
     render::text3d({12.3f, gY + 2.2f, 21.2f}, "XEROX PRINT", {.20f, .95f, .45f});
+    airConditioner(16.35f, gY, 20.4f, true);
+    npc(14.8f, gY, 20.10f, 180.0f, NpcActivity::Cashier, {.18f, .30f, .68f});
+    npc(13.6f, gY, 20.8f, 0.0f, NpcActivity::Read, {.68f, .24f, .18f});
 
     // =========================================================================
     // 9. GAMING ROOM 1 & GAMING ROOM 2 (Ground Floor: x in [3.6, 16.6], z in [9.5, 16.2])
@@ -611,6 +819,8 @@ void renderFurniture(bool labels) {
     render::text3d({4.3f, gY + 2.40f, 12.99f}, "PLAY 5 ARCADE GAMES ON THIS SCREEN:", {1, 1, 1});
     render::text3d({4.3f, gY + 2.05f, 12.99f}, "[1] TTT  [2] RPS  [3] 2048  [4] CUBE  [5] LUDO", {.95f, .82f, .25f});
     render::text3d({4.3f, gY + 1.60f, 12.99f}, ">> PRESS 'E' TO PLAY ON SCREEN <<", {.20f, .96f, .45f});
+    airConditioner(16.35f, gY, 14.7f, true);
+    npc(9.4f, gY, 16.10f, 180.0f, NpcActivity::Game, {.18f, .48f, .78f});
 
     // Arcade Console Desk with Joysticks & Illuminated Buttons
     render::box({5.8f, gY + .45f, 13.40f}, {2.6f, .90f, .50f}, {.14f, .16f, .20f});
@@ -650,6 +860,8 @@ void renderFurniture(bool labels) {
     render::text3d({12.2f, gY + 2.70f, 12.61f}, "SEU GAMING LOUNGE SCREEN", {.95f, .82f, .25f});
     render::text3d({12.2f, gY + 2.35f, 12.61f}, "CHESS / LUDO / 2048 / RUBIK'S / RPS", {1, 1, 1});
     render::text3d({12.2f, gY + 1.80f, 12.61f}, ">> PRESS 'E' TO PLAY ON SCREEN <<", {.20f, .96f, .45f});
+    airConditioner(16.35f, gY, 11.0f, true);
+    npc(11.0f, gY, 10.15f, 0.0f, NpcActivity::Game, {.78f, .20f, .18f});
 
     // Lounge Sitting Area
     sofa(5.4f, gY, 11.2f, 2.2f, .80f, 90.0f);
@@ -684,15 +896,30 @@ void renderFurniture(bool labels) {
     // Lifts across all 4 floors
     for (float flY : {gY, f2Y, f3Y, f4Y}) {
         const int flNum = flY == gY ? 1 : (flY == f2Y ? 2 : (flY == f3Y ? 3 : 4));
-        lift(-17.2f, flY, 25.0f, flNum, false); lift(-13.5f, flY, 25.0f, flNum, true);
-        lift(6.6f,   flY, 25.2f, flNum, false); lift(10.6f,  flY, 25.2f, flNum, true);
+        const bool carAtLanding = std::abs(liftPresentationFloor - flNum) < .06f;
+        const float doorsAtLanding = carAtLanding ? liftPresentationDoor : 0.0f;
+        // Every landing keeps a visible closed portal. Only the selected car
+        // gets a cabin interior; this prevents four cabins appearing at once.
+        lift(-17.2f, flY, 25.0f, flNum, false, false, true);
+        lift(-13.5f, flY, 25.0f, flNum, doorsAtLanding, false, true);
+        lift(6.6f,   flY, 25.2f, flNum, false, false, true);
+        lift(10.6f,  flY, 25.2f, flNum, doorsAtLanding, false, true);
         render::text3d({-15.35f, flY + 3.85f, 24.8f}, "LIFT [PRESS 1, 2, 3, 4]", {.88f, .92f, 1.0f});
         render::text3d({8.6f,    flY + 3.85f, 25.0f}, "LIFT [PRESS 1, 2, 3, 4]", {.88f, .92f, 1.0f});
     }
 
+    // The car itself moves between landings while the landing portals stay
+    // fixed. Both boardable cars are presented together for a coherent bank.
+    const float carY = gY + (liftPresentationFloor - 1.0f) * 4.0f;
+    const int carFloor = static_cast<int>(liftPresentationFloor + .5f);
+    lift(-13.5f, carY, 25.0f, carFloor, liftPresentationDoor, true, false);
+    lift(10.6f,  carY, 25.2f, carFloor, liftPresentationDoor, true, false);
+
     // Ground Floor Washrooms
     for (float x : {-22.5f, -21.6f}) render::box({x, gY + .45f, 26.2f}, {.55f, .55f, .55f}, {.92f, .92f, .94f});
     for (float x : {14.3f, 15.4f})  render::box({x, gY + .45f, 26.2f}, {.55f, .55f, .55f}, {.92f, .92f, .94f});
+    airConditioner(-20.95f, gY, 27.5f, true);
+    airConditioner(16.35f, gY, 27.0f, true);
 
     // =========================================================================
     // 11. SECOND FLOOR FURNISHINGS (Floor Level: y = 5.2f)
@@ -706,6 +933,9 @@ void renderFurniture(bool labels) {
     diningTableSet(-17.5f, f2Y, 36.5f, 2.0f, 1.2f);
     render::cylinder({-17.5f, f2Y + .95f, 32.5f}, .06f, .25f, chromeColor);
     render::cylinder({-17.5f, f2Y + .95f, 36.5f}, .06f, .25f, chromeColor);
+    airConditioner(-11.65f, f2Y, 36.0f, true);
+    npc(-17.5f, f2Y, 33.35f, 180.0f, NpcActivity::Read, {.18f, .38f, .72f});
+    npc(-17.5f, f2Y, 37.35f, 180.0f, NpcActivity::Read, {.68f, .24f, .18f});
 
     // --- CSE & AI LAB (Floor 2: x in [-24, -11.5], z in [14.0, 24.6]) ---
     for (float x : {-21.5f, -19.0f, -16.5f}) {
@@ -722,6 +952,8 @@ void renderFurniture(bool labels) {
     }
     render::box({-23.2f, f2Y + 1.5f, 15.0f}, {.65f, 2.6f, .9f}, {.12f, .14f, .16f});
     render::box({-22.85f, f2Y + 1.8f, 15.0f}, {.02f, .08f, .14f}, {.1f, .85f, .35f});
+    airConditioner(-11.65f, f2Y, 20.0f, true);
+    npc(-19.0f, f2Y, 18.25f, 180.0f, NpcActivity::Lab, {.18f, .58f, .78f});
 
     // --- CLASSROOM 201 (Floor 2: x in [5.0, 16.5], z in [14.0, 22.0]) ---
     render::box({10.5f, f2Y + .65f, 15.0f}, {.95f, 1.25f, .65f}, woodDark);
@@ -732,16 +964,22 @@ void renderFurniture(bool labels) {
             chair(x, f2Y, z + .52f, 180.0f);
         }
     }
+    airConditioner(16.25f, f2Y, 18.0f, true);
+    npc(10.5f, f2Y, 16.10f, 0.0f, NpcActivity::Teach, {.72f, .25f, .16f});
+    npc(7.5f, f2Y, 18.15f, 180.0f, NpcActivity::Read, {.20f, .46f, .78f});
 
     // --- DEAN'S OFFICE (Floor 2: x in [-24, -11.5], z in [9.5, 14.0]) ---
     officeDesk(-17.0f, f2Y, 11.4f, 2.4f, 1.0f);
     sofa(-21.5f, f2Y, 11.4f, 2.6f, .85f, 90.0f);
     render::box({-20.0f, f2Y + .35f, 11.4f}, {1.2f, .30f, .70f}, woodTop);
+    airConditioner(-11.65f, f2Y, 12.0f, true);
+    npc(-17.0f, f2Y, 10.65f, 0.0f, NpcActivity::Desk, {.42f, .22f, .58f});
 
     // --- SKY TERRACE BALCONY (Floor 2: x in [-10.0, 5.0], z in [9.5, 13.5]) ---
     roundTableSet(-7.0f, f2Y, 11.5f, 0.70f);
     roundTableSet(-2.5f, f2Y, 11.5f, 0.70f);
     roundTableSet( 2.0f, f2Y, 11.5f, 0.70f);
+    npc(-7.0f, f2Y, 12.60f, 180.0f, NpcActivity::Talk, {.18f, .55f, .30f});
 
     // =========================================================================
     // 12. THIRD FLOOR FURNISHINGS (Floor Level: y = 9.2f)
@@ -758,12 +996,16 @@ void renderFurniture(bool labels) {
             chair(ax, f3Y, az, 0.0f); // Facing stage
         }
     }
+    airConditioner(-11.65f, f3Y, 36.0f, true);
+    npc(-17.75f, f3Y, 37.15f, 180.0f, NpcActivity::Present, {.72f, .25f, .16f});
 
     // --- ROBOTICS & INNOVATION LAB (Floor 3: x in [-24, -11.5], z in [14.0, 23.5]) ---
     render::texturedBox({-17.75f, f3Y + .80f, 18.5f}, {4.5f, .08f, 2.0f}, woodTop, 2);
     render::box({-17.75f, f3Y + 1.15f, 18.5f}, {.8f, .55f, .6f}, {.20f, .55f, .85f}); // Robotics assembly unit
     chair(-19.5f, f3Y, 19.8f, 0.0f);
     chair(-16.0f, f3Y, 19.8f, 0.0f);
+    airConditioner(-11.65f, f3Y, 20.0f, true);
+    npc(-17.75f, f3Y, 20.35f, 180.0f, NpcActivity::Lab, {.18f, .50f, .72f});
 
     // --- FACULTY CONFERENCE SUITE (Floor 3: x in [5.0, 16.5], z in [14.0, 22.0]) ---
     render::box({10.5f, f3Y + .80f, 18.0f}, {4.8f, .08f, 1.8f}, woodDark);
@@ -773,10 +1015,14 @@ void renderFurniture(bool labels) {
     }
     chair(13.5f, f3Y, 18.0f, -90.0f);
     chair(7.5f,  f3Y, 18.0f, 90.0f);
+    airConditioner(16.25f, f3Y, 18.0f, true);
+    npc(14.0f, f3Y, 18.0f, -90.0f, NpcActivity::Talk, {.62f, .26f, .18f});
 
     // --- CHAIRMAN SUITE (Floor 3: x in [-24, -11.5], z in [9.5, 14.0]) ---
     officeDesk(-17.0f, f3Y, 11.4f, 2.4f, 1.0f);
     sofa(-21.5f, f3Y, 11.4f, 2.6f, .85f, 90.0f);
+    airConditioner(-11.65f, f3Y, 12.0f, true);
+    npc(-17.0f, f3Y, 10.65f, 0.0f, NpcActivity::Desk, {.22f, .42f, .68f});
 
     // =========================================================================
     // 13. FOURTH FLOOR FURNISHINGS (Floor Level: y = 13.2f)
@@ -789,10 +1035,14 @@ void renderFurniture(bool labels) {
         chair(cx, f4Y, 31.6f, 0.0f);
     }
     render::box({-17.75f, f4Y + 2.5f, 39.8f}, {6.5f, 2.0f, .06f}, {.95f, .96f, .98f});
+    airConditioner(-11.65f, f4Y, 36.0f, true);
+    npc(-17.75f, f4Y, 35.05f, 180.0f, NpcActivity::Talk, {.18f, .34f, .62f});
 
     // --- CHANCELLOR SUITE (Floor 4: x in [-24, -11.5], z in [14.0, 23.5]) ---
     officeDesk(-17.0f, f4Y, 18.5f, 2.6f, 1.1f);
     sofa(-21.0f, f4Y, 18.5f, 2.8f, .90f, 90.0f);
+    airConditioner(-11.65f, f4Y, 20.0f, true);
+    npc(-17.0f, f4Y, 17.68f, 0.0f, NpcActivity::Desk, {.62f, .24f, .18f});
 
     // --- ROOFTOP SKY GARDEN LOUNGE (Floor 4: x in [2.0, 16.0], z in [11.0, 35.0]) ---
     roundTableSet(6.5f,  f4Y, 16.0f, 0.75f);
@@ -802,6 +1052,8 @@ void renderFurniture(bool labels) {
     // Sky Garden Planters with Lush Greenery
     render::box({9.5f, f4Y + .35f, 23.0f}, {4.0f, .65f, 1.2f}, {.42f, .32f, .22f});
     render::cylinder({9.5f, f4Y + .95f, 23.0f}, .85f, .85f, {.15f, .46f, .18f});
+    npc(6.5f, f4Y, 17.15f, 180.0f, NpcActivity::Talk, {.20f, .48f, .75f});
+    npc(12.5f, f4Y, 28.85f, 0.0f, NpcActivity::Read, {.72f, .28f, .18f});
 
     // =========================================================================
     // ROOM IDENTIFICATION LABELS

@@ -6,6 +6,7 @@
 #include "../physics/CollisionWorld.h"
 #include "../interaction/InteractionSystem.h"
 #include "../games/GameManager.h"
+#include "../chat/SEUGPTChat.h"
 
 class App {
 public:
@@ -17,6 +18,7 @@ private:
     CollisionWorld collisionWorld_;
     InteractionSystem interaction_;
     GameManager games_;
+    SEUGPTChat chat_;
     Camera camera_;
     int width_ = 1280, height_ = 720, lastTimeMs_ = 0;
     bool debug_ = false, demo_ = false, topDown_ = false, labels_ = true, panorama_ = false, facadeView_ = false, mouseCaptured_ = false, ignoreMouseWarp_ = false;
@@ -33,10 +35,22 @@ private:
     float chaseDistance_ = 10.0f, chaseHeight_ = 4.5f, chaseYaw_ = 90.0f, chasePitch_ = -18.0f;
 
     // Elevator / Lift System
+    enum class LiftPhase { Idle, Opening, Open, Closing, Traveling };
     bool inLiftArea(const Vec3& pos) const;
+    bool inLiftCabin(const Vec3& pos) const;
+    int floorAtPlayer() const;
     void handleElevator(int floor);
+    void updateLift(float dt);
+    void syncLiftWorld();
+    float floorY(int floor) const;
     std::string elevatorNotification_;
     float elevatorNotifyTimer_ = 0.0f;
+    LiftPhase liftPhase_ = LiftPhase::Idle;
+    float liftFloorPosition_ = 4.0f;
+    float liftDoorAmount_ = 0.0f;
+    float liftPhaseTimer_ = 0.0f;
+    int liftTargetFloor_ = 4;
+    bool liftRiding_ = false;
 
     App() = default;
     void update(float dt);

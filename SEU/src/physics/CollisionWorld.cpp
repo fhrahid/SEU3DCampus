@@ -148,6 +148,15 @@ bool CollisionWorld::overlaps(const Aabb& box, float x, float y, float z, float 
 Vec3 CollisionWorld::move(Vec3 position, Vec3 delta, float radius) const {
     const float playerHeight = 1.8f;
     Vec3 result = position;
+    auto liftDoorBlocks = [this, radius, playerHeight, delta, &result](float baseY, float minX, float maxX, float frontZ) {
+        if (liftDoorsOpen_ && liftFloor_ == static_cast<int>((baseY - 1.2f) / 4.0f) + 1) return false;
+        const Aabb door{minX, maxX, frontZ - .14f, frontZ + .14f, baseY, baseY + 3.0f};
+        if (!overlaps(door, result.x, result.y, result.z, radius, playerHeight)) return false;
+        if (std::abs(delta.z) > 1e-5f) {
+            result.z = delta.z > 0 ? door.minZ - radius : door.maxZ + radius;
+        }
+        return true;
+    };
     if (std::abs(delta.x) > 1e-5f) {
         result.x += delta.x;
         for (const Aabb& box : solids_) if (overlaps(box, result.x, result.y, result.z, radius, playerHeight)) {
@@ -160,9 +169,21 @@ Vec3 CollisionWorld::move(Vec3 position, Vec3 delta, float radius) const {
             if (delta.z > 0) result.z = box.minZ - radius; else result.z = box.maxZ + radius;
         }
     }
+    // Boardable Lift 4 / Lift 2 landing doors are dynamic. Closed doors
+    // prevent entering the shaft; only the car's current open landing is free.
+    for (int floor = 1; floor <= 4; ++floor) {
+        const float baseY = 1.2f + (floor - 1) * 4.0f;
+        liftDoorBlocks(baseY, -14.65f, -12.35f, 25.0f);
+        liftDoorBlocks(baseY, 9.45f, 11.75f, 25.2f);
+    }
     result.x = std::max(-23.8f, std::min(16.5f, result.x));
     result.z = std::max(.2f, std::min(39.8f, result.z));
     return result;
+}
+
+void CollisionWorld::setLiftState(int floor, bool doorsOpen) {
+    liftFloor_ = std::max(1, std::min(4, floor));
+    liftDoorsOpen_ = doorsOpen;
 }
 
 void CollisionWorld::debugDraw() const {

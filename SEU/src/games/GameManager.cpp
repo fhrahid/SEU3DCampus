@@ -58,8 +58,10 @@ void GameManager::render(int width, int height) const {
     glEnd();
 
     // 2. Calculate Monitor Dimensions & Centering
-    const int monW = std::min(780, width - 40);
-    const int monH = std::min(580, height - 50);
+    // Keep the overlay valid even while the user is dragging the window to a
+    // very small size. Negative dimensions otherwise invert the monitor quad.
+    const int monW = std::max(320, std::min(780, width - 40));
+    const int monH = std::max(240, std::min(580, height - 50));
     const int monX = (width - monW) / 2;
     const int monY = std::max(10, (height - monH) / 2 - 10);
     const int cx = monX + monW / 2;
